@@ -1,0 +1,87 @@
+﻿body {
+    padding: 50px 0 0 0;
+    margin: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+header.nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    background-color: dimgray;
+    min-height: 50px;
+    display: flex;
+    flex-direction: row;
+}
+
+.nav > button{
+    margin: 2px 4px;
+}
+
+.button-left {
+}
+
+.button-right {
+}
+
+.test-block{
+    margin: 20px;
+}
+
+
+.container {
+    margin: 0 auto;
+    max-width: 1280px;
+    width: 90%;
+}
+
+@media only screen and (min-width: 601px) {
+    .container {
+        width: 85%;
+    }
+}
+
+@media only screen and (min-width: 993px) {
+    .container {
+        width: 70%;
+    }
+}
+
+
+.aucmenu-bay {
+    position: fixed;
+    left: 0;
+    top: 50px;
+    right: 0;
+    height: calc(100% - 50px);
+}
+
+.aucmenu-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.aucmenu-docker {
+    position: absolute;
+    width: 300px;
+    top: 0;
+    bottom: 0;
+    /*transition: transform 0.6s;*/
+    outline: 2px solid gray;
+}
+
+    .aucmenu-docker.left {
+        left: 0;
+    }
+
+    .aucmenu-docker.right {
+        right: 0;
+    }
+
+    .aucmenu-host.dock {
+    }
