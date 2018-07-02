@@ -411,71 +411,107 @@ function _NS_(path) {
 (function (NS, $) {
     'use strict';
 
-    const offCanvasSize = 300;  //px
-    const transitionDuration = 600;     //ms
-    const yieldDuration = 10;   //ms
+    const uuid = (function () {
+        var n = 0;
+        return function () {
+            return 'autreemenu_node_' + (n++);
+        }
+    })();
 
+    NS.TreeMenu = function (container, options) {
 
-    function reset(element, offset) {
-        element.css({
-            'display': 'none',
-            'transform': 'translate3d(' + offset + 'px,0,0)',
-            'transition-duration': '0ms',
-            'transition-property': 'transform'
-        });
-    }
-
-
-    NS.Overlap = function (context) {
-        var offset;
-        switch (context.side) {
-            case AuJS.AuDocker.Sides.LEFT: offset = -offCanvasSize; break;
-            case AuJS.AuDocker.Sides.RIGHT: offset = offCanvasSize; break;
+        function scan(source, parentId, level) {
+            if ($.isPlainObject(source)) {
+                const id = source.id || uuid();
+                var node = nodeMap[id];
+                if (!node) {
+                    node = nodeMap[id] = { id: id };
+                }
+                node.parentId = parentId;
+                node.level = level;
+                //node.pos = ++pos;
+                node.label = source.label || '';
+                node.icon = source.icon;
+                node.children = Array.isArray(source.items) ? scan(source.items, id, level + 1) : [];
+                return [id];
+            }
+            else if (Array.isArray(source)) {
+                var idlist = [];
+                source.forEach(function (s) {
+                    idlist.push(scan(s, parentId, level));
+                });
+                return idlist;
+            }
+            else {
+                throw new Error('Source type not supported.');
+            }
         }
 
+
+        function render() {
+            //var list = [];
+            //for (var id in nodeMap) {
+            //    list.push({ id: id, pos: nodeMap[id].pos });
+            //}
+            //list.sort(function (a, b) { return a.pos - b.pos; });
+
+            //var roots = [];
+            //list.forEach(function (n) {
+            //    if (nodeMap[n.id].level === 0) {
+            //        roots.push(n.id);
+            //    }
+            //});
+
+            roots.forEach(function (id) {
+                renderNode(id);
+            });
+        }
+
+
+        function renderNode(id) {
+            var node = nodeMap[id];
+            var elem = $('<div>', { class: 'autreemenu-node' })
+                .appendTo(container);
+            $('<span>', { class: 'exp' }).appendTo(elem);
+            $('<span>', { class: 'label' }).appendTo(elem).text(node.label);
+            $('<span>', { class: 'icon' }).appendTo(elem);
+            node.children.forEach(function (cid) {
+                renderNode(cid);
+            });
+        }
+
+
+        //var pos = 0;
+        const roots = [];
+        const nodeMap = {};
         const module = {};
 
-        module.isAutoClose = function () {
-            return true;
-        }
-
         module.init = function () {
-            reset(context.element, offset);
+
         }
 
-        module.open = function (cb) {
-            context.element.css({
-                'display': '',
-            });
-            setTimeout(function () {
-                context.element.css({
-                    'transform': 'translate3d(0,0,0)'
-                });
-                context.element.css('background-color', 'antiquewhite').text('Dock mode');
-                setTimeout(function () {
-                    cb();
-                }, transitionDuration);
-            }, yieldDuration);
+        module.getData = function () { }
+        module.setData = function (data) {
+            roots.splice(0);
+            Array.prototype.push.apply(roots, scan(data, null, 0));
+            render();
         }
 
-        module.close = function (cb) {
-            context.element.css({
-                'transform': 'translate3d(' + offset + 'px,0,0)'
-            });
-            setTimeout(function () {
-                context.element.css({
-                    'display': 'none'
-                });
-                cb();
-            }, transitionDuration);
-        }
+        module.getState = function () { }
+        module.setState = function () { }
+
+        module.getSelected = function () { }
+        module.setSelected = function () { }
+
+        module.refresh = function () { }
+
 
         module.destroy = function () {
-            reset(context.element, offset);
+
         }
 
         return module;
     }
 
 
-})(_NS_('AuJS.AuDockerRenderers'), jQuery);
+})(_NS_('AuJS'), jQuery);
