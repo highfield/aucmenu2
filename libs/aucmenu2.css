@@ -4,6 +4,7 @@
     top: 50px;
     right: 0;
     height: calc(100% - 50px);
+    pointer-events: none;
 }
 
 .aucmenu-overlay {
@@ -13,6 +14,7 @@
     top: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.2);
+    pointer-events: initial;
 }
 
 .aucmenu-docker {
@@ -22,6 +24,7 @@
     bottom: 0;
     /*transition: transform 0.6s;*/
     outline: 2px solid gray;
+    pointer-events: initial;
 }
 
     .aucmenu-docker.left {
@@ -33,4 +36,71 @@
     }
 
 .aucmenu-host.dock {
+}
+
+
+.autreemenu {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.autreemenu-node {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.autreemenu-node-header {
+    display: flex;
+    flex-direction: row;
+    padding: 4px 8px 4px 0px;
+    outline-width: 1px;
+    outline-color: gainsboro;
+    outline-style: solid;
+}
+
+    .autreemenu-node-header > .exp {
+        min-width: 32px;
+        display: flex;
+    }
+
+        .autreemenu-node-header > .exp > a {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: initial;
+        }
+
+    .autreemenu-node-header > a {
+        flex-grow: 1;
+        overflow-x: hidden;
+        text-decoration: none;
+        color: initial;
+    }
+
+.autreemenu-node-caption {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+}
+
+    .autreemenu-node-caption > .label {
+        flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .autreemenu-node-caption > .icon {
+        min-width: 24px;
+        text-align: center;
+        margin: auto 4px;
+    }
+
+.autreemenu-node-items {
+    margin-left: 24px;
+    overflow-y: hidden;
 }

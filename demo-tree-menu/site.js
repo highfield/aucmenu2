@@ -2,6 +2,7 @@ $(function () {
     'use strict';
 
     var menu_left = AuJS.TreeMenu($('.container > .left'), {});
+    var menu_right = AuJS.TreeMenu($('.container > .right'), {});
 
     $('.button-left').on('click', function () {
         menu_left.setData(DB.tree);
@@ -9,6 +10,7 @@ $(function () {
     });
 
     $('.button-right').on('click', function () {
+        menu_right.setData(DB.tree);
         //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).toggle();
     });
 

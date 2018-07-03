@@ -17,7 +17,7 @@ DB.tree = {
                         { "label": "Super Smart Phone", "icon": "fa fa-audio-description" },
                         { "label": "Thin Magic Mobile", "icon": "fa fa-sign-language" },
                         { "label": "Performance Crusher", "icon": "fa fa-volume-control-phone" },
-                        { "label": "Futuristic Experience", "icon": "fa fa-tty" }
+                        { "label": "Best Futuristic Experience", "icon": "fa fa-tty" }
                     ]
                 },
                 {

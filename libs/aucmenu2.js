@@ -411,12 +411,116 @@ function _NS_(path) {
 (function (NS, $) {
     'use strict';
 
+    const itemHeight = 40;
+    const expSymbol = 'fas fa-angle-right';
+    const transitionDuration = 600;     //ms
+
     const uuid = (function () {
         var n = 0;
         return function () {
             return 'autreemenu_node_' + (n++);
         }
     })();
+
+    /**
+     * node schema:
+     *  parentId: (string) ref-ID to the parent node, or <null> for a root node
+     *  level: (number) non-negative integer indicating the depth level, where zero is a root
+     *  expanded: (bool) indicates whether the node is expanded or not
+     *  label: (string)
+     *  icon: (string)
+     *  children: (array) list of ID-references to the children nodes
+     */
+    function Node(id) {
+        const self = this;
+        var state = 'O';
+
+        Object.defineProperty(this, 'id', {
+            value: id,
+            writable: false
+        });
+
+        //Object.defineProperty(this, 'expanded', {
+        //    get: function () { return state === 'O'; }
+        //});
+
+        this.parentId = null;
+        this.level = 0;
+        this.expanded = false;
+        this.label = null;
+        this.icon = null;
+        this.children = [];
+        this.element = null;
+
+        this.expand = function () {
+            if (state === 'C') {
+                state = 'o';
+                const button = self.element.children('.autreemenu-node-header > .exp > a').children();
+                button.css({
+                    'transform': 'rotate(90deg)',
+                    'transition-duration': transitionDuration + 'ms',
+                    'transition-property': 'transform'
+                });
+
+                const items = self.element.children('.autreemenu-node-items');
+                items.css({
+                    'opacity': 1,
+                    'height': childrenHeight(items),
+                    'transition-duration': transitionDuration + 'ms',
+                    'transition-property': 'opacity, height'
+                });
+
+                setTimeout(function () {
+                    state = 'O';
+                }, transitionDuration);
+            }
+        }
+
+        this.collapse = function () {
+            if (state === 'O') {
+                state = 'c';
+                const button = self.element.children('.autreemenu-node-header > .exp > a').children();
+                button.css({
+                    'transform': 'rotate(0deg)',
+                    'transition-duration': transitionDuration + 'ms',
+                    'transition-property': 'transform'
+                });
+
+                const items = self.element.children('.autreemenu-node-items');
+                items.css({
+                    'opacity': 0,
+                    'height': 0,
+                    'transition-duration': transitionDuration + 'ms',
+                    'transition-property': 'opacity, height'
+                });
+
+                setTimeout(function () {
+                    state = 'C';
+                }, transitionDuration);
+            }
+        }
+
+        this.cmdexp = function () {
+            if (state === 'C') {
+                self.expand();
+            }
+            else if (state === 'O') {
+                self.collapse();
+            }
+        }
+    }
+
+
+    function childrenHeight(itemsCtr) {
+        var h = 0;
+        (itemsCtr || self.element.children('.autreemenu-node-items'))
+            .children()
+            .each(function () {
+                h += $(this).height();
+            });
+        return h;
+    }
+
 
     NS.TreeMenu = function (container, options) {
 
@@ -425,11 +529,11 @@ function _NS_(path) {
                 const id = source.id || uuid();
                 var node = nodeMap[id];
                 if (!node) {
-                    node = nodeMap[id] = { id: id };
+                    node = nodeMap[id] = new Node(id);
+                    //node = nodeMap[id] = { id: id };
                 }
                 node.parentId = parentId;
                 node.level = level;
-                //node.pos = ++pos;
                 node.label = source.label || '';
                 node.icon = source.icon;
                 node.children = Array.isArray(source.items) ? scan(source.items, id, level + 1) : [];
@@ -463,25 +567,65 @@ function _NS_(path) {
             //});
 
             roots.forEach(function (id) {
-                renderNode(id);
+                renderNode(id, container);
             });
         }
 
 
-        function renderNode(id) {
-            var node = nodeMap[id];
-            var elem = $('<div>', { class: 'autreemenu-node' })
-                .appendTo(container);
-            $('<span>', { class: 'exp' }).appendTo(elem);
-            $('<span>', { class: 'label' }).appendTo(elem).text(node.label);
-            $('<span>', { class: 'icon' }).appendTo(elem);
+        function renderNode(id, parentElement) {
+            const node = nodeMap[id];
+            node.element = $('<div>', { class: 'autreemenu-node', 'data-id': id })
+                .appendTo(parentElement);
+
+            const header = $('<div>', { class: 'autreemenu-node-header' }).css({
+                'height': itemHeight
+            }).appendTo(node.element);
+
+            const hostExp = $('<div>', { class: 'exp' }).appendTo(header);
+            const btnExp = $('<a>', { href: '#' }).appendTo(hostExp).on('click', hbtnExp);
+
+            const btnCapt = $('<a>', { href: '#' }).appendTo(header);
+            const inner = $('<div>', { class: 'autreemenu-node-caption' }).appendTo(btnCapt);
+            const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
+            const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+            if (options.renderIcon) {
+                //TODO
+            }
+            else if (node.icon) {
+                $('<i>', { class: node.icon }).appendTo(hostIcon);
+            }
+
+            if (options.renderExp) {
+                //TODO
+            }
+            else if (node.children.length) {
+                $('<i>', { class: expSymbol }).appendTo(btnExp);
+            }
+
+            const itemsCtr = $('<div>', { class: 'autreemenu-node-items' }).appendTo(node.element);
             node.children.forEach(function (cid) {
-                renderNode(cid);
+                renderNode(cid, itemsCtr);
+            });
+            itemsCtr.css({
+                'opacity': 1,
+                'height': childrenHeight(itemsCtr),
+                'display': 'block'
             });
         }
 
 
-        //var pos = 0;
+        function hbtnExp(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            const id = $(this).closest('.autreemenu-node').data('id');
+            const node = nodeMap[id];
+            node.cmdexp();
+            return false;
+        }
+
+        container.addClass('autreemenu');
+
         const roots = [];
         const nodeMap = {};
         const module = {};
