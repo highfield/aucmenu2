@@ -20,34 +20,20 @@
 
 
 
-.au-treemenu {
+.au-blademenu {
     background-color: darkblue !important;
     color: ivory;
 }
 
-.au-treemenu-node {
-    background-color: rgba(192,192,255,0.2);
-}
-
-    .au-treemenu-node.level0 {
-        background-color: transparent;
+    .au-blademenu.blade {
+        background-color: rgba(192,192,255,0.2);
     }
 
-    .au-treemenu-node.selected > .au-treemenu-node-header {
+    .au-blademenu.node.selected > .header {
         background-color: dodgerblue;
         color: yellow;
     }
 
-.au-treemenu-node-header {
-    /*outline-width: 1px;*/
-    /*outline-color: darkkhaki;*/
-    /*outline-style: solid;*/
-}
-
-    .au-treemenu-node-header:hover {
+    .au-blademenu.node > .header:hover {
         background: rgba(255,255,255,0.25);
     }
-
-.au-treemenu-node-outline {
-    border-color: khaki;
-}

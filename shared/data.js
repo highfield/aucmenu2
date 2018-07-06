@@ -25,7 +25,7 @@ DB.tree = {
                     "icon": "fa fa-tv",
                     "items": [
                         { "label": "Flat Superscreen", "icon": "fa fa-ambulance" },
-                        { "label": "Gigantic LED", "icon": "fa fa-bus" },
+                        { "label": "Gigantic LED", "icon": "fa fa-bus", "id": "node_gig_led" },
                         { "label": "Power Eater", "icon": "fa fa-plane" },
                         { "label": "3D Experience", "icon": "fa fa-rocket" },
                         { "label": "Classic Comfort", "icon": "fa fa-truck" }
@@ -95,7 +95,7 @@ DB.tree = {
                     "icon": "fa fa-music",
                     "items": [
                         { "label": "Ray Conniff", "icon": "fa fa-hand-lizard-o" },
-                        { "label": "Perez Prado", "icon": "fa fa-hand-o-down" },
+                        { "label": "Perez Prado", "icon": "fa fa-hand-o-down", "id": "node_perez_prado" },
                         { "label": "Glenn Miller", "icon": "fa fa-hand-o-left" },
                         { "label": "Percy Faith", "icon": "fa fa-hand-o-right" },
                         { "label": "Carlos Santana", "icon": "fa fa-hand-o-up" },

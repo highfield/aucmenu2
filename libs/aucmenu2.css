@@ -39,68 +39,173 @@
 }
 
 
-.autreemenu {
+/*
+    au-treemenu
+*/
+
+.au-treemenu {
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.autreemenu-node {
+.au-treemenu-node {
     display: flex;
     flex-direction: column;
     background-color: white;
 }
 
-.autreemenu-node-header {
+    .au-treemenu-node.selected > .au-treemenu-node-header {
+        background-color: lightcyan;
+    }
+
+.au-treemenu-node-outline-bay {
+    position: relative;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    transition: opacity 100ms;
+}
+
+.au-treemenu-node-outline {
+    position: absolute;
+    left: 15px;
+    top: -12px;
+    width: 15px;
+    border-color: gray;
+    border-style: solid;
+    border-width: 0 0 1px 1px;
+}
+
+.au-treemenu-node-header {
     display: flex;
     flex-direction: row;
     padding: 4px 8px 4px 0px;
-    outline-width: 1px;
-    outline-color: gainsboro;
-    outline-style: solid;
+    /*outline-width: 1px;*/
+    /*outline-color: gainsboro;*/
+    /*outline-style: solid;*/
 }
 
-    .autreemenu-node-header > .exp {
+    .au-treemenu-node-header > .exp {
         min-width: 32px;
         display: flex;
     }
 
-        .autreemenu-node-header > .exp > a {
+        .au-treemenu-node-header > .exp > a {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            color: initial;
+            color: inherit;
         }
 
-    .autreemenu-node-header > a {
+    .au-treemenu-node-header > a {
         flex-grow: 1;
         overflow-x: hidden;
         text-decoration: none;
-        color: initial;
+        color: inherit;
     }
 
-.autreemenu-node-caption {
+.au-treemenu-node-caption {
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 100%;
 }
 
-    .autreemenu-node-caption > .label {
+    .au-treemenu-node-caption > .label {
         flex-grow: 1;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    .autreemenu-node-caption > .icon {
+    .au-treemenu-node-caption > .icon {
         min-width: 24px;
         text-align: center;
         margin: auto 4px;
     }
 
-.autreemenu-node-items {
+.au-treemenu-node-items {
     margin-left: 24px;
     overflow-y: hidden;
 }
+
+
+/*
+    au-blademenu
+*/
+
+.au-blademenu {
+    width: 0;
+    height: 0;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+    .au-blademenu.node, .au-blademenu.blade {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+    }
+
+    .au-blademenu.blade {
+        position: absolute;
+    }
+
+        .au-blademenu.node.selected > .header {
+            background-color: lightcyan;
+        }
+
+    .au-blademenu > .header {
+        display: flex;
+        flex-direction: row;
+        padding: 4px 8px 4px 0px;
+    }
+
+        .au-blademenu > .header > .exp {
+            min-width: 32px;
+            display: flex;
+        }
+
+            .au-blademenu > .header > .exp > a {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: inherit;
+            }
+
+        .au-blademenu > .header > a {
+            flex-grow: 1;
+            overflow-x: hidden;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .au-blademenu > .header .caption {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+        }
+
+        .au-blademenu > .header .label {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .au-blademenu > .header .icon {
+            min-width: 24px;
+            text-align: center;
+            margin: auto 4px;
+        }
+
+    .au-blademenu > .items {
+        margin-left: 24px;
+        overflow-y: hidden;
+    }

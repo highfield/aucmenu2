@@ -13,16 +13,22 @@ header.nav {
     min-height: 50px;
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
 }
 
-.nav > button{
+.nav > .left{
+}
+
+.nav > .mid {
+}
+
+.nav > .right {
+}
+
+.nav button {
     margin: 2px 4px;
-}
-
-.button-left {
-}
-
-.button-right {
+    height: calc(100% - 4px);
 }
 
 

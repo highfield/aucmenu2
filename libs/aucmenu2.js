@@ -288,26 +288,23 @@ function _NS_(path) {
             }
 
             function preset(state, offset) {
+                const elementStyle = context.element[0].style;
                 switch (state) {
                     case AuJS.AuDocker.States.OPENING:
                     case AuJS.AuDocker.States.OPENED:
-                        context.element.css({
-                            'display': '',
-                            'transform': 'translate3d(0,0,0)',
-                            'transition-duration': '0ms',
-                            'transition-property': 'transform'
-                        });
+                        elementStyle.display = '';
+                        elementStyle.transitionDuration = '0ms';
+                        elementStyle.transitionProperty = 'transform';
+                        elementStyle.transform = 'translate3d(0,0,0)';
                         indent(!options.autoClose);
                         break;
 
                     case AuJS.AuDocker.States.CLOSING:
                     case AuJS.AuDocker.States.CLOSED:
-                        context.element.css({
-                            'display': 'none',
-                            'transform': 'translate3d(' + offset + 'px,0,0)',
-                            'transition-duration': '0ms',
-                            'transition-property': 'transform'
-                        });
+                        elementStyle.display = 'none';
+                        elementStyle.transitionDuration = '0ms';
+                        elementStyle.transitionProperty = 'transform';
+                        elementStyle.transform = 'translate3d(' + offset + 'px,0,0)';
                         indent(false);
                         break;
                 }
@@ -339,16 +336,12 @@ function _NS_(path) {
             }
 
             module.open = function (cb) {
-                context.element.css({
-                    'display': '',
-                });
+                const elementStyle = context.element[0].style;
+                elementStyle.display = '';
                 setTimeout(function () {
-                    context.element.css({
-                        'transform': 'translate3d(0,0,0)',
-                        'transition-duration': transitionDuration + 'ms',
-                        'transition-property': 'transform'
-                    });
-                    //context.element.css('background-color', 'antiquewhite').text('Dock mode');
+                    elementStyle.transitionDuration = transitionDuration + 'ms';
+                    elementStyle.transitionProperty = 'transform';
+                    elementStyle.transform = 'translate3d(0,0,0)';
                     setTimeout(function () {
                         if (!options.autoClose) {
                             indent(true);
@@ -359,18 +352,14 @@ function _NS_(path) {
             }
 
             module.close = function (cb) {
-                context.element.css({
-                    'transform': 'translate3d(' + offset + 'px,0,0)',
-                    'transition-duration': transitionDuration + 'ms',
-                    'transition-property': 'transform'
-                });
+                elementStyle.transitionDuration = transitionDuration + 'ms';
+                elementStyle.transitionProperty = 'transform';
+                elementStyle.transform = 'translate3d(' + offset + 'px,0,0)';
                 if (!options.autoClose) {
                     indent(false);
                 }
                 setTimeout(function () {
-                    context.element.css({
-                        'display': 'none'
-                    });
+                    elementStyle.display = 'none';
                     cb();
                 }, transitionDuration);
             }
@@ -411,10 +400,6 @@ function _NS_(path) {
 (function (NS, $) {
     'use strict';
 
-    const itemHeight = 40;
-    const expSymbol = 'fas fa-angle-right';
-    const transitionDuration = 600;     //ms
-
     const uuid = (function () {
         var n = 0;
         return function () {
@@ -422,119 +407,49 @@ function _NS_(path) {
         }
     })();
 
-    /**
-     * node schema:
-     *  parentId: (string) ref-ID to the parent node, or <null> for a root node
-     *  level: (number) non-negative integer indicating the depth level, where zero is a root
-     *  expanded: (bool) indicates whether the node is expanded or not
-     *  label: (string)
-     *  icon: (string)
-     *  children: (array) list of ID-references to the children nodes
-     */
-    function Node(id) {
-        const self = this;
-        var state = 'O';
 
-        Object.defineProperty(this, 'id', {
-            value: id,
-            writable: false
-        });
+    NS.MenuStruct = function (options) {
 
-        //Object.defineProperty(this, 'expanded', {
-        //    get: function () { return state === 'O'; }
-        //});
+        /**
+         * node schema:
+         *  id: (string) ID which characterizes the node itself
+         *  parentId: (string) ref-ID to the parent node, or <null> for a root node
+         *  level: (number) non-negative integer indicating the depth level, where zero is a root
+         *  expandable: (bool) indicates whether the node can be expanded or not
+         *  label: (string)
+         *  icon: (string)
+         *  children: (array) list of ID-references to the children nodes
+         */
+        function Node(context, id) {
+            const self = this;
 
-        this.parentId = null;
-        this.level = 0;
-        this.expanded = false;
-        this.label = null;
-        this.icon = null;
-        this.children = [];
-        this.element = null;
-
-        this.expand = function () {
-            if (state === 'C') {
-                state = 'o';
-                const button = self.element.children('.autreemenu-node-header > .exp > a').children();
-                button.css({
-                    'transform': 'rotate(90deg)',
-                    'transition-duration': transitionDuration + 'ms',
-                    'transition-property': 'transform'
-                });
-
-                const items = self.element.children('.autreemenu-node-items');
-                items.css({
-                    'opacity': 1,
-                    'height': childrenHeight(items),
-                    'transition-duration': transitionDuration + 'ms',
-                    'transition-property': 'opacity, height'
-                });
-
-                setTimeout(function () {
-                    state = 'O';
-                }, transitionDuration);
-            }
-        }
-
-        this.collapse = function () {
-            if (state === 'O') {
-                state = 'c';
-                const button = self.element.children('.autreemenu-node-header > .exp > a').children();
-                button.css({
-                    'transform': 'rotate(0deg)',
-                    'transition-duration': transitionDuration + 'ms',
-                    'transition-property': 'transform'
-                });
-
-                const items = self.element.children('.autreemenu-node-items');
-                items.css({
-                    'opacity': 0,
-                    'height': 0,
-                    'transition-duration': transitionDuration + 'ms',
-                    'transition-property': 'opacity, height'
-                });
-
-                setTimeout(function () {
-                    state = 'C';
-                }, transitionDuration);
-            }
-        }
-
-        this.cmdexp = function () {
-            if (state === 'C') {
-                self.expand();
-            }
-            else if (state === 'O') {
-                self.collapse();
-            }
-        }
-    }
-
-
-    function childrenHeight(itemsCtr) {
-        var h = 0;
-        (itemsCtr || self.element.children('.autreemenu-node-items'))
-            .children()
-            .each(function () {
-                h += $(this).height();
+            Object.defineProperty(this, 'id', {
+                value: id,
+                writable: false
             });
-        return h;
-    }
 
+            Object.defineProperty(this, 'expandable', {
+                get: function () { return self.children.length !== 0; }
+            });
 
-    NS.TreeMenu = function (container, options) {
+            this.parentId = null;
+            this.level = 0;
+            this.label = null;
+            this.icon = null;
+            this.children = [];
+        }
+
 
         function scan(source, parentId, level) {
             if ($.isPlainObject(source)) {
                 const id = source.id || uuid();
-                var node = nodeMap[id];
+                var node = context.nodeMap[id];
                 if (!node) {
-                    node = nodeMap[id] = new Node(id);
-                    //node = nodeMap[id] = { id: id };
+                    node = context.nodeMap[id] = new Node(context, id);
                 }
                 node.parentId = parentId;
                 node.level = level;
-                node.label = source.label || '';
+                node.label = source.label;
                 node.icon = source.icon;
                 node.children = Array.isArray(source.items) ? scan(source.items, id, level + 1) : [];
                 return [id];
@@ -552,110 +467,629 @@ function _NS_(path) {
         }
 
 
-        function render() {
-            //var list = [];
-            //for (var id in nodeMap) {
-            //    list.push({ id: id, pos: nodeMap[id].pos });
-            //}
-            //list.sort(function (a, b) { return a.pos - b.pos; });
-
-            //var roots = [];
-            //list.forEach(function (n) {
-            //    if (nodeMap[n.id].level === 0) {
-            //        roots.push(n.id);
-            //    }
-            //});
-
-            roots.forEach(function (id) {
-                renderNode(id, container);
-            });
+        if (!$.isPlainObject(options)) {
+            options = {};
         }
 
-
-        function renderNode(id, parentElement) {
-            const node = nodeMap[id];
-            node.element = $('<div>', { class: 'autreemenu-node', 'data-id': id })
-                .appendTo(parentElement);
-
-            const header = $('<div>', { class: 'autreemenu-node-header' }).css({
-                'height': itemHeight
-            }).appendTo(node.element);
-
-            const hostExp = $('<div>', { class: 'exp' }).appendTo(header);
-            const btnExp = $('<a>', { href: '#' }).appendTo(hostExp).on('click', hbtnExp);
-
-            const btnCapt = $('<a>', { href: '#' }).appendTo(header);
-            const inner = $('<div>', { class: 'autreemenu-node-caption' }).appendTo(btnCapt);
-            const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
-            const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
-
-            if (options.renderIcon) {
-                //TODO
-            }
-            else if (node.icon) {
-                $('<i>', { class: node.icon }).appendTo(hostIcon);
-            }
-
-            if (options.renderExp) {
-                //TODO
-            }
-            else if (node.children.length) {
-                $('<i>', { class: expSymbol }).appendTo(btnExp);
-            }
-
-            const itemsCtr = $('<div>', { class: 'autreemenu-node-items' }).appendTo(node.element);
-            node.children.forEach(function (cid) {
-                renderNode(cid, itemsCtr);
-            });
-            itemsCtr.css({
-                'opacity': 1,
-                'height': childrenHeight(itemsCtr),
-                'display': 'block'
-            });
+        const context = {
+            roots: [],
+            nodeMap: {}
         }
-
-
-        function hbtnExp(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            const id = $(this).closest('.autreemenu-node').data('id');
-            const node = nodeMap[id];
-            node.cmdexp();
-            return false;
-        }
-
-        container.addClass('autreemenu');
-
-        const roots = [];
-        const nodeMap = {};
         const module = {};
 
-        module.init = function () {
-
+        module._getContext = function () {
+            return context;
         }
 
-        module.getData = function () { }
+        module.getNode = function (arg) {
+            if ($.isFunction(arg)) {
+                for (var id in context.nodeMap) {
+                    const node = context.nodeMap[id];
+                    if (arg(node)) return node;
+                }
+            }
+            else if (typeof arg === 'string') {
+                return context.nodeMap[arg];
+            }
+        }
+
+        module.getNodes = function () {
+            return context.nodeMap.values();
+        }
+
+        var xdata = {};
+        module.getData = function () { return xdata; }
         module.setData = function (data) {
-            roots.splice(0);
-            Array.prototype.push.apply(roots, scan(data, null, 0));
-            render();
-        }
-
-        module.getState = function () { }
-        module.setState = function () { }
-
-        module.getSelected = function () { }
-        module.setSelected = function () { }
-
-        module.refresh = function () { }
-
-
-        module.destroy = function () {
-
+            xdata = data || {};
+            context.roots = scan(xdata, null, 0);
         }
 
         return module;
     }
 
+
+    NS.MenuSelectorSingle = function () {
+
+        const listeners = [];
+        const module = {};
+
+        module.addListener = function (ls) {
+            if (!ls || listeners.indexOf(ls) >= 0) return;
+            listeners.push(ls);
+        }
+
+        module.removeListener = function (ls) {
+            if (!ls) return;
+            const ix = listeners.indexOf(ls);
+            if (ix >= 0) {
+                listeners.splice(ix, 1);
+            }
+        }
+
+        var selection;
+        Object.defineProperty(module, 'selection', {
+            get: function () { return selection; },
+            set: function (v) {
+                if (selection !== v) {
+                    selection = v;
+                    listeners.forEach(function (ls) {
+                        if ($.isFunction(ls)) {
+                            ls(selection);
+                        }
+                        else if ($.isFunction(ls.onselect)) {
+                            ls.onselect(selection);
+                        }
+                    });
+                }
+            }
+        });
+
+        return module;
+    }
+
+
+    NS.TreeMenuRenderer = function (struct, container, options) {
+
+        const itemHeight = 40;
+        const expSymbol = 'fas fa-angle-right';
+        const transitionDuration = 200;     //ms
+        const yieldDuration = 10;   //ms
+
+        const context = struct._getContext();
+
+
+        function NodeRenderer(node) {
+            const self = this;
+            var state = 'C';
+
+            Object.defineProperty(this, 'node', {
+                value: node,
+                writable: false
+            });
+
+            var selected = false;
+            Object.defineProperty(this, 'selected', {
+                get: function () { return selected; }
+            });
+
+            this.expanded = false;
+            this.rendered = false;
+
+            this.element = null;
+            this.itemCtr = null;
+            this.outlineBay = null;
+            this.outline = null;
+
+            this.render = function (parentElement, parentOutlineBay) {
+                self.element = $('<div>', { class: 'au-treemenu-node level' + node.level, 'data-id': node.id })
+                    .appendTo(parentElement);
+
+                selected && self.element.addClass('selected');
+
+                const header = $('<div>', { class: 'au-treemenu-node-header' }).css({
+                    'height': itemHeight
+                }).appendTo(self.element);
+
+
+                //block to host the expander button, whereas useful
+                const xhost = $('<div>', { class: 'exp' }).appendTo(header);
+
+                //main button, as the node selection button, and related handler
+                const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (module.selector) {
+                        module.selector.selection = node.id;
+                    }
+                    return false;
+                });
+
+                //node main face: text and optional icon
+                const inner = $('<div>', { class: 'au-treemenu-node-caption' }).appendTo(mbtn);
+                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
+                const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+                if (node.icon) {
+                    $('<i>', { class: node.icon }).appendTo(hostIcon);
+                }
+
+                //outline-bay to host the children's outlines
+                self.outlineBay = $('<div>', {
+                    class: 'au-treemenu-node-outline-bay'
+                }).appendTo(self.element);
+
+                if (parentOutlineBay) {
+                    self.outline = $('<div>', { class: 'au-treemenu-node-outline' }).appendTo(parentOutlineBay);
+                }
+
+                //children nodes host
+                self.itemsCtr = $('<div>', { class: 'au-treemenu-node-items' }).appendTo(self.element);
+
+                if (node.expandable) {
+                    //expander button and related handler
+                    const xbtn = $('<a>', { href: '#' }).appendTo(xhost).on('click', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        self.cmdexp();
+                        return false;
+                    });
+
+                    const xbtnContent = $('<i>', { class: expSymbol }).appendTo(xbtn);
+                    const xbtnContentStyle = xbtnContent[0].style;
+
+                    const itemsCtrStyle = self.itemsCtr[0].style;
+
+                    if (self.expanded) {
+                        state = 'O';
+                        xbtnContentStyle.transition = '';
+                        xbtnContentStyle.transform = 'rotate(90deg)';
+                    }
+                    else {
+                        state = 'C';
+                        itemsCtrStyle.transition = '';
+                        itemsCtrStyle.opacity = 0;
+                        itemsCtrStyle.height = 0;
+                    }
+                }
+
+                node.children.forEach(function (cid) {
+                    const child = context.nodeMap[cid];
+                    const nrend = nrendMap[cid] = new NodeRenderer(child);
+                    nrend.render(self.itemsCtr, self.outlineBay);
+                });
+
+                self.rendered = true;
+                self.updateChildrenOutlines();
+            }
+
+            this.updateSiblingOutlines = function () {
+                var parent = nrendMap[node.parentId];
+                if (parent) {
+                    parent.updateSiblingOutlines();
+                    parent.updateChildrenOutlines();
+                }
+            }
+
+            this.updateChildrenOutlines = function () {
+                if (!self.rendered) return;
+                var h = itemHeight;
+                node.children.forEach(function (cid) {
+                    const child = nrendMap[cid];
+                    child.outline.css('height', h - 4);
+                    h += child.element.height();
+                });
+                self.showOutlineBay(self.expanded);
+            }
+
+            this.showOutlineBay = function (value) {
+                if (!self.rendered) return;
+                self.outlineBay.css('opacity', value ? 1 : 0);
+                var parent = nrendMap[node.parentId];
+                if (parent) {
+                    parent.showOutlineBay(value);
+                }
+            }
+
+            this.expand = function () {
+                if (!self.rendered) {
+                    state = 'O';
+                }
+                else if (state === 'C' && node.expandable) {
+                    state = 'o';
+                    self.showOutlineBay(false);
+
+                    const button = self.element
+                        .children('.au-treemenu-node-header')
+                        .find('.exp > a')
+                        .children();
+                    const buttonStyle = button[0].style;
+                    buttonStyle.transitionDuration = transitionDuration + 'ms';
+                    buttonStyle.transitionProperty = 'transform';
+                    buttonStyle.transform = 'rotate(90deg)';
+
+                    const itemsCtrStyle = self.itemsCtr[0].style;
+                    itemsCtrStyle.transition = '';
+                    itemsCtrStyle.opacity = 0;
+                    itemsCtrStyle.height = 0;
+
+                    setTimeout(function () {
+                        itemsCtrStyle.transitionDuration = transitionDuration + 'ms';
+                        itemsCtrStyle.transitionProperty = 'opacity, height';
+                        itemsCtrStyle.opacity = 1;
+                        itemsCtrStyle.height = self.getChildrenHeight() + 'px';
+
+                        setTimeout(function () {
+                            state = 'O';
+                            itemsCtrStyle.height = 'auto';
+                            self.updateSiblingOutlines();
+                            self.showOutlineBay(true);
+                        }, transitionDuration);
+                    }, yieldDuration);
+                }
+            }
+
+            this.collapse = function () {
+                if (!self.rendered) {
+                    state = 'C';
+                }
+                else if (state === 'O' && node.expandable) {
+                    state = 'c';
+                    self.showOutlineBay(false);
+
+                    const button = self.element
+                        .children('.au-treemenu-node-header')
+                        .find('.exp > a')
+                        .children();
+                    const buttonStyle = button[0].style;
+                    buttonStyle.transitionDuration = transitionDuration + 'ms';
+                    buttonStyle.transitionProperty = 'transform';
+                    buttonStyle.transform = 'rotate(0deg)';
+
+                    const itemsCtrStyle = self.itemsCtr[0].style;
+                    itemsCtrStyle.transition = '';
+                    itemsCtrStyle.opacity = 1;
+                    itemsCtrStyle.height = self.getChildrenHeight() + 'px';
+
+                    setTimeout(function () {
+                        itemsCtrStyle.transitionDuration = transitionDuration + 'ms';
+                        itemsCtrStyle.transitionProperty = 'opacity, height';
+                        itemsCtrStyle.opacity = 0;
+                        itemsCtrStyle.height = 0;
+
+                        setTimeout(function () {
+                            state = 'C';
+                            self.updateSiblingOutlines();
+                        }, transitionDuration);
+                    }, yieldDuration);
+                }
+            }
+
+            this.cmdexp = function () {
+                if (state === 'C') {
+                    self.expand();
+                }
+                else if (state === 'O') {
+                    self.collapse();
+                }
+            }
+
+            this.expandParents = function () {
+                self.expand();
+                var parent = nrendMap[node.parentId];
+                if (parent) {
+                    parent.expandParents();
+                }
+            }
+
+            this.select = function (value) {
+                value = !!value;
+                if (selected !== value) {
+                    selected = value;
+                    if (self.rendered) {
+                        if (selected) {
+                            self.element.addClass('selected');
+                        }
+                        else {
+                            self.element.removeClass('selected');
+                        }
+                    }
+                }
+                if (selected) {
+                    self.expandParents();
+                    self.bringIntoView();
+                }
+            }
+
+            this.bringIntoView = function () {
+                if (!self.rendered) return;
+                const excess = 1.2;
+                setTimeout(function () {
+                    //quick and dirty 'bringIntoView'
+                    var outerElement = container[0];
+                    var outerRect = outerElement.getBoundingClientRect();
+                    var selfRect = self.element[0].getBoundingClientRect();
+                    if (selfRect.top < outerRect.top) {
+                        outerElement.scrollTop = outerElement.scrollTop - (outerRect.top - selfRect.top) * excess;
+                    }
+                    else if (selfRect.top + selfRect.height > outerRect.top + outerRect.height) {
+                        outerElement.scrollTop = outerElement.scrollTop + (selfRect.top + selfRect.height - outerRect.top - outerRect.height) * excess;
+                    }
+                }, transitionDuration * excess);
+            }
+
+            this.getChildrenHeight = function () {
+                var h = 0;
+                self.itemsCtr.children()
+                    .each(function () {
+                        h += $(this).height();
+                    });
+                return h;
+            }
+        }
+
+
+        const selector_onselect = function (selection) {
+            for (var id in nrendMap) {
+                nrendMap[id].select(id === selection);
+            }
+        }
+
+
+        if (!$.isPlainObject(options)) {
+            options = {};
+        }
+
+        const module = {};
+
+        var selector;
+        Object.defineProperty(module, 'selector', {
+            get: function () { return selector; },
+            set: function (v) {
+                if (selector !== v) {
+                    if (selector) selector.removeListener(selector_onselect);
+                    selector = v;
+                    if (selector) selector.addListener(selector_onselect);
+                }
+            }
+        });
+
+
+        var nrendMap = {};
+        module.render = function () {
+            container.addClass('au-treemenu');
+
+            context.roots.forEach(function (id) {
+                const node = context.nodeMap[id];
+                const nrend = nrendMap[id] = new NodeRenderer(node);
+                nrend.render(container, null);
+            });
+
+            const selection = module.selector && module.selector.selection;
+            if (selection) {
+                const selectedRenderer = nrendMap[selection];
+                selectedRenderer && selectedRenderer.select(true);
+            }
+        }
+
+
+        module.destroy = function () {
+            nrendMap = {};
+            container.removeClass('au-treemenu');
+            container.empty();
+        }
+
+        return module;
+    }
+
+
+    NS.BladeMenuRenderer = function (struct, container, options) {
+
+        const itemHeight = 40;
+        const backSymbol = 'fas fa-angle-right';
+        const expSymbol = 'fas fa-angle-right';
+        const transitionDuration = 800;     //ms
+        const yieldDuration = 10;   //ms
+
+        const context = struct._getContext();
+
+
+        function BladeRenderer(node) {
+            const self = this;
+            var state = 'C';
+
+            this.rendered = false;
+            this.element = null;
+            this.itemCtr = null;
+
+            this.render = function (bladeContainer) {
+                self.element = $('<div>', { class: 'au-blademenu blade level' + node.level})
+                    .appendTo(bladeContainer);
+
+                const header = $('<div>', { class: 'header' }).css({
+                    'height': itemHeight
+                }).appendTo(self.element);
+
+
+                //block to host the back button
+                const bhost = $('<div>', { class: 'back' }).appendTo(header);
+
+                //back button and related handler
+                const bbtn = $('<a>', { href: '#' }).appendTo(bhost).on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    //
+                    return false;
+                });
+
+                const bbtnContent = $('<i>', { class: backSymbol }).appendTo(bbtn);
+
+                //main button, as the node selection button, and related handler
+                const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (module.selector) {
+                        module.selector.selection = node.id;
+                    }
+                    return false;
+                });
+
+                //node main face: text and optional icon
+                const inner = $('<div>', { class: 'caption' }).appendTo(mbtn);
+                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
+                const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+                if (node.icon) {
+                    $('<i>', { class: node.icon }).appendTo(hostIcon);
+                }
+
+                //children nodes host
+                self.itemsCtr = $('<div>', { class: 'items' }).appendTo(self.element);
+
+                node.children.forEach(function (id) {
+                    const child = context.nodeMap[id];
+                    const nrend = nrendMap[id] = new NodeRenderer(self, child);
+                    nrend.render(self.itemsCtr, bladeContainer);
+                });
+
+                self.rendered = true;
+            }
+
+            this.expand = function () {
+            }
+
+            this.collapse = function () {
+            }
+
+            this.expandParents = function () {
+            }
+        }
+
+
+        function NodeRenderer(blade, node) {
+            const self = this;
+
+            Object.defineProperty(this, 'blade', {
+                value: blade,
+                writable: false
+            });
+
+            Object.defineProperty(this, 'node', {
+                value: node,
+                writable: false
+            });
+
+            var selected = false;
+            Object.defineProperty(this, 'selected', {
+                get: function () { return selected; }
+            });
+
+            this.rendered = false;
+            this.element = null;
+
+            this.render = function (parentElement, bladeContainer) {
+                self.element = $('<div>', { class: 'au-blademenu node', 'data-id': node.id })
+                    .appendTo(parentElement);
+
+                selected && self.element.addClass('selected');
+
+                const header = $('<div>', { class: 'header' }).css({
+                    'height': itemHeight
+                }).appendTo(self.element);
+
+
+                //block to host the expander button, whereas useful
+                const xhost = $('<div>', { class: 'exp' }).appendTo(header);
+
+                //main button, as the node selection button, and related handler
+                const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (module.selector) {
+                        module.selector.selection = node.id;
+                    }
+                    return false;
+                });
+
+                //node main face: text and optional icon
+                const inner = $('<div>', { class: 'caption' }).appendTo(mbtn);
+                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
+                const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+                if (node.icon) {
+                    $('<i>', { class: node.icon }).appendTo(hostIcon);
+                }
+
+                if (node.children.length) {
+                    const childBlade = new BladeRenderer(node);
+                    bladeList.push(childBlade);
+                    childBlade.render(bladeContainer);
+                }
+
+                self.rendered = true;
+            }
+
+            this.select = function (value) {
+            }
+        }
+
+
+        const selector_onselect = function (selection) {
+            //for (var id in nrendMap) {
+            //    nrendMap[id].select(id === selection);
+            //}
+        }
+
+
+        if (!$.isPlainObject(options)) {
+            options = {};
+        }
+
+        const module = {};
+
+        var selector;
+        Object.defineProperty(module, 'selector', {
+            get: function () { return selector; },
+            set: function (v) {
+                if (selector !== v) {
+                    if (selector) selector.removeListener(selector_onselect);
+                    selector = v;
+                    if (selector) selector.addListener(selector_onselect);
+                }
+            }
+        });
+
+
+        var bladeList = [];
+        var nrendMap = {};
+        module.render = function () {
+            const host = $('<div>', { class: 'au-blademenu' }).appendTo(container);
+
+            const vroot = {
+                id: '',
+                level: 0,
+                label: 'Menu title',
+                icon: '',
+                children: context.roots
+            };
+            const blade = new BladeRenderer(vroot);
+            bladeList.push(blade);
+            blade.render(host);
+
+            const selection = module.selector && module.selector.selection;
+            if (selection) {
+                const selectedRenderer = nrendMap[selection];
+                selectedRenderer && selectedRenderer.select(true);
+            }
+        }
+
+
+        module.destroy = function () {
+            bladeList = [];
+            nrendMap = {};
+            container.empty();
+        }
+
+        return module;
+    }
 
 })(_NS_('AuJS'), jQuery);
