@@ -1,7 +1,11 @@
 $(function () {
     'use strict';
 
-    function myRenderer () {
+    /**
+     * sample content manager for the right sidebar
+     **/
+
+    function myRenderer() {
 
         function update(inc) {
             const counter = fragment.children().eq(0);
@@ -38,25 +42,66 @@ $(function () {
         }
     }
 
-
-    const leftRenderer = myRenderer();
-    leftRenderer.create();
-
     const rightRenderer = myRenderer();
 
+
+    $('.button-right-unload').on('click', function () {
+        rightRenderer.destroy();
+        AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
+    });
+
+    $('.button-right-load').on('click', function () {
+        rightRenderer.create();
+        AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
+    });
+
+
+
+    /**
+     * menu model structure
+     **/
+    const menu_struct = AuJS.MenuStruct();
+    menu_struct.setData(DB.tree);
+
+
+    /**
+     * selection manager (single selection only)
+     **/
+    const selectionManager = AuJS.MenuSelectorSingle();
+
+
+    /**
+     * blade-menu renderer
+     **/
+    const bladeRenderer = AuJS.BladeMenuRenderer(menu_struct);
+    bladeRenderer.selector = selectionManager;
+
+
+
+    /**
+     * tree-menu renderer
+     **/
+    const treeRenderer = AuJS.TreeMenuRenderer(menu_struct);
+    treeRenderer.selector = selectionManager;
+
+
+
+    /**
+     * Drawers setup
+     **/
 
     const drawerCtl = AuJS.Drawer.Controller();
     const dl = drawerCtl.add(AuJS.Drawer.Sides.LEFT, {
         render_lg: {
-            renderer: leftRenderer,
+            renderer: treeRenderer,
             isAutoClose: false,
             persistent: true
         },
         render_sm: {
-            renderer: leftRenderer,
+            renderer: bladeRenderer,
             isAutoClose: true,
             persistent: true,
-            drawerSize: 200
+            customDrawer: true
         }
     });
 
@@ -68,50 +113,39 @@ $(function () {
         }
     });
     drawerCtl.create();
+
     //$(window).on('AuDocker:ready', function () {
     //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.LEFT).setOptions({
     //        render_lg: {
-    //            renderer: leftRenderer,
+    //            renderer: treeRenderer,
     //            isAutoClose: false,
     //            persistent: true
     //        },
     //        render_sm: {
-    //            renderer: leftRenderer,
+    //            renderer: bladeRenderer,
     //            isAutoClose: true,
     //            persistent: true,
-    //            drawerSize: 200
+    //            customDrawer: true
     //        }
     //    });
 
     //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).setOptions({
     //        render_lg: {
     //            renderer: rightRenderer,
-    //            persistent: true,
-    //            drawerSize: 450,
+    //            persistent: true
     //        }
     //    });
     //});
 
+
     $('.button-left').on('click', function () {
         dl.toggle();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.LEFT).toggle();
     });
 
     $('.button-right').on('click', function () {
         dr.toggle();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).toggle();
     });
 
-    $('.button-right-unload').on('click', function () {
-        rightRenderer.destroy();
-        dr.invalidateContent();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
-    });
-
-    $('.button-right-load').on('click', function () {
-        rightRenderer.create();
-        dr.invalidateContent();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
-    });
 
 });
+

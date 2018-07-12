@@ -10,6 +10,7 @@
 
     .container > .left {
         margin: 24px;
+        width: 300px;
     }
 
     .container > .mid {
@@ -20,34 +21,34 @@
 
 
 
-.au-treemenu {
+.aujs-treemenu {
     background-color: darkblue !important;
     color: ivory;
 }
 
-.au-treemenu-node {
+.aujs-treemenu-node {
     background-color: rgba(192,192,255,0.2);
 }
 
-    .au-treemenu-node.level0 {
+    .aujs-treemenu-node.level0 {
         background-color: transparent;
     }
 
-    .au-treemenu-node.selected > .au-treemenu-node-header {
+    .aujs-treemenu-node.selected > .aujs-treemenu-node-header {
         background-color: dodgerblue;
         color: yellow;
     }
 
-.au-treemenu-node-header {
+.aujs-treemenu-node-header {
     /*outline-width: 1px;*/
     /*outline-color: darkkhaki;*/
     /*outline-style: solid;*/
 }
 
-    .au-treemenu-node-header:hover {
-        background: rgba(255,255,255,0.25);
+    .aujs-treemenu-node-header:hover {
+        background-color: rgba(255,255,255,0.25);
     }
 
-.au-treemenu-node-outline {
+.aujs-treemenu-node-outline {
     border-color: khaki;
 }

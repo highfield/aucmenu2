@@ -43,15 +43,17 @@ $(function () {
     /**
      * menu renderer
      **/
-    const renderer = AuJS.TreeMenuRenderer(menu_struct, $('.container > .mid'));
+    const renderer = AuJS.TreeMenuRenderer(menu_struct);
     renderer.selector = selectionManager;
 
     $('.button-render').on('click', function () {
-        renderer.render();
+        renderer.attach({
+            element: $('.container > .mid')
+        });
     });
 
     $('.button-destroy').on('click', function () {
-        renderer.destroy();
+        renderer.detach();
     });
 
 

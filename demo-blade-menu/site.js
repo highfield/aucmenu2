@@ -27,6 +27,17 @@ $(function () {
     });
 
 
+    $('#open').on('click', function () {
+        renderer.attach({
+            element: $('.container > .mid')
+        });
+        renderer.open();
+    });
+
+    $('#close').on('click', function () {
+        renderer.close();
+    });
+
     $('#sel_none').on('click', function () {
         selectionManager.selection = null;
     });
@@ -39,19 +50,25 @@ $(function () {
         selectionManager.selection = 'node_perez_prado';
     });
 
+    $('#sel_n3').on('click', function () {
+        selectionManager.selection = 'node_verdi';
+    });
+
 
     /**
      * menu renderer
      **/
-    const renderer = AuJS.BladeMenuRenderer(menu_struct, $('.container > .mid'));
+    const renderer = AuJS.BladeMenuRenderer(menu_struct);
     renderer.selector = selectionManager;
 
     $('.button-render').on('click', function () {
-        renderer.render();
+        renderer.attach({
+            element: $('.container > .mid')
+        });
     });
 
     $('.button-destroy').on('click', function () {
-        renderer.destroy();
+        renderer.detach();
     });
 
 

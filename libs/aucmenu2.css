@@ -1,13 +1,36 @@
-﻿.aucmenu-bay {
+﻿
+/*
+    aujs-drawer
+*/
+
+.aujs-drawer-bay {
     position: fixed;
     left: 0;
-    top: 50px;
     right: 0;
+    top: 50px;
     height: calc(100% - 50px);
     pointer-events: none;
 }
 
-.aucmenu-overlay {
+.aujs-drawer {
+    position: absolute;
+    /*width: 300px;*/
+    top: 0;
+    bottom: 0;
+    outline: 1px solid gray;
+    pointer-events: initial;
+    background-color: white;
+}
+
+    .aujs-drawer.left {
+        left: 0;
+    }
+
+    .aujs-drawer.right {
+        right: 0;
+    }
+
+.aujs-drawer-overlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -17,80 +40,40 @@
     pointer-events: initial;
 }
 
-.aucmenu-docker {
-    position: absolute;
-    width: 300px;
-    top: 0;
-    bottom: 0;
-    /*transition: transform 0.6s;*/
-    outline: 2px solid gray;
-    pointer-events: initial;
-}
-
-    .aucmenu-docker.left {
-        left: 0;
-    }
-
-    .aucmenu-docker.right {
-        right: 0;
-    }
-
-.aucmenu-host.dock {
-}
-
 
 /*
-    au-treemenu
+    aujs-treemenu
 */
 
-.au-treemenu {
+.aujs-treemenu {
+    position: relative;
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.au-treemenu-node {
+.aujs-treemenu-node {
     display: flex;
     flex-direction: column;
     background-color: white;
 }
 
-    .au-treemenu-node.selected > .au-treemenu-node-header {
+    .aujs-treemenu-node.selected > .aujs-treemenu-node-header {
         background-color: lightcyan;
     }
 
-.au-treemenu-node-outline-bay {
-    position: relative;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-    transition: opacity 100ms;
-}
-
-.au-treemenu-node-outline {
-    position: absolute;
-    left: 15px;
-    top: -12px;
-    width: 15px;
-    border-color: gray;
-    border-style: solid;
-    border-width: 0 0 1px 1px;
-}
-
-.au-treemenu-node-header {
+.aujs-treemenu-node-header {
     display: flex;
     flex-direction: row;
     padding: 4px 8px 4px 0px;
-    /*outline-width: 1px;*/
-    /*outline-color: gainsboro;*/
-    /*outline-style: solid;*/
 }
 
-    .au-treemenu-node-header > .exp {
-        min-width: 32px;
+    .aujs-treemenu-node-header > .exp {
+        /*min-width: 32px;*/
         display: flex;
     }
 
-        .au-treemenu-node-header > .exp > a {
+        .aujs-treemenu-node-header > .exp > a {
             flex-grow: 1;
             display: flex;
             align-items: center;
@@ -99,77 +82,150 @@
             color: inherit;
         }
 
-    .au-treemenu-node-header > a {
+    .aujs-treemenu-node-header > a {
         flex-grow: 1;
         overflow-x: hidden;
         text-decoration: none;
         color: inherit;
+        /*margin-left: 4px;*/
     }
 
-.au-treemenu-node-caption {
+.aujs-treemenu-node-caption {
     display: flex;
     flex-direction: row;
     align-items: center;
     height: 100%;
 }
 
-    .au-treemenu-node-caption > .label {
+    .aujs-treemenu-node-caption > .label {
         flex-grow: 1;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    .au-treemenu-node-caption > .icon {
-        min-width: 24px;
+    .aujs-treemenu-node-caption > .icon {
+        /*min-width: 24px;*/
         text-align: center;
         margin: auto 4px;
     }
 
-.au-treemenu-node-items {
-    margin-left: 24px;
+.aujs-treemenu-node-items {
+    /*margin-left: 24px;*/
     overflow-y: hidden;
+}
+
+.aujs-treemenu-node-outline-bay {
+    position: relative;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 100ms;
+}
+
+.aujs-treemenu-node-outline {
+    position: absolute;
+    /*left: 15px;*/
+    /*top: -12px;*/
+    /*width: 15px;*/
+    border-color: gray;
+    border-style: solid;
+    border-width: 0 0 1px 1px;
 }
 
 
 /*
-    au-blademenu
+    aujs-blademenu
 */
 
-.au-blademenu {
-    width: 0;
-    height: 0;
+.aujs-blademenu {
     position: relative;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    width: 150%;
+    height: 100%;
+    pointer-events: none;
 }
 
-    .au-blademenu.node, .au-blademenu.blade {
-        display: flex;
-        flex-direction: column;
-        background-color: white;
-    }
-
-    .au-blademenu.blade {
+    .aujs-blademenu > div {
         position: absolute;
+        left: 0;
+        /*width: 300px;*/
+        top: -8px;
+        bottom: -8px;
+        transform: translate3d(-110%, 0, 0);
+        pointer-events: none;
     }
 
-        .au-blademenu.node.selected > .header {
-            background-color: lightcyan;
+.aujs-blademenu-node {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+    .aujs-blademenu-node.blade {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 8px;
+        bottom: 8px;
+        -webkit-box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
+    }
+
+        .aujs-blademenu-node.blade.open {
+            transition-property: transform, opacity, visibility;
+            transition-duration: 300ms;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: initial;
         }
 
-    .au-blademenu > .header {
+            .aujs-blademenu-node.blade.open.indent0 {
+                transform: translate3d(110%, 0, 0);
+            }
+
+            .aujs-blademenu-node.blade.open.indent1 {
+                transform: translate3d(120%, 0, 0);
+            }
+
+            .aujs-blademenu-node.blade.open.indent2 {
+                transform: translate3d(130%, 0, 0);
+            }
+
+            .aujs-blademenu-node.blade.open.indent3 {
+                transform: translate3d(140%, 0, 0);
+            }
+
+            .aujs-blademenu-node.blade.open.indent4 {
+                transform: translate3d(150%, 0, 0);
+            }
+
+        .aujs-blademenu-node.blade.close {
+            transition-property: transform, opacity, visibility;
+            transition-duration: 300ms;
+            transform: translate3d(0, 0, 0);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+    .aujs-blademenu-node.item.selected > .header {
+        background-color: lightcyan;
+    }
+
+    .aujs-blademenu-node > .header {
         display: flex;
         flex-direction: row;
         padding: 4px 8px 4px 0px;
     }
 
-        .au-blademenu > .header > .exp {
-            min-width: 32px;
+        .aujs-blademenu-node > .header > div {
+            /*min-width: 32px;*/
             display: flex;
         }
 
-            .au-blademenu > .header > .exp > a {
+            .aujs-blademenu-node > .header > div > a {
                 flex-grow: 1;
                 display: flex;
                 align-items: center;
@@ -178,34 +234,34 @@
                 color: inherit;
             }
 
-        .au-blademenu > .header > a {
+        .aujs-blademenu-node > .header > a {
             flex-grow: 1;
             overflow-x: hidden;
             text-decoration: none;
             color: inherit;
         }
 
-        .au-blademenu > .header .caption {
+        .aujs-blademenu-node > .header .caption {
             display: flex;
             flex-direction: row;
             align-items: center;
             height: 100%;
         }
 
-        .au-blademenu > .header .label {
+        .aujs-blademenu-node > .header .label {
             flex-grow: 1;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
         }
 
-        .au-blademenu > .header .icon {
-            min-width: 24px;
+        .aujs-blademenu-node > .header .icon {
+            /*min-width: 24px;*/
             text-align: center;
             margin: auto 4px;
         }
 
-    .au-blademenu > .items {
-        margin-left: 24px;
-        overflow-y: hidden;
+    .aujs-blademenu-node > .items {
+        /*margin-left: 24px;*/
+        overflow-y: auto;
     }

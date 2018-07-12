@@ -1,25 +1,41 @@
-﻿.container {
-    position: absolute;
-    left: 15%;
-    right: 15%;
-    top: 15%;
-    bottom: 15%;
-    display: flex;
-    flex-direction: row;
+﻿
+/* treemenu */
+
+.aujs-treemenu {
+    background-color: darkblue !important;
+    color: ivory;
 }
 
-    .container > .left {
-        margin: 24px;
-        width: 300px;
+.aujs-treemenu-node {
+    background-color: rgba(192,192,255,0.2);
+}
+
+    .aujs-treemenu-node.level0 {
+        background-color: transparent;
     }
 
-    .container > .mid {
-        width: 300px;
-        height: 100%;
-        outline: 1px solid gainsboro;
+    .aujs-treemenu-node.selected > .aujs-treemenu-node-header {
+        background-color: dodgerblue;
+        color: yellow;
     }
 
+.aujs-treemenu-node-header {
+    /*outline-width: 1px;*/
+    /*outline-color: darkkhaki;*/
+    /*outline-style: solid;*/
+}
 
+    .aujs-treemenu-node-header:hover {
+        background-color: rgba(255,255,255,0.25);
+    }
+
+.aujs-treemenu-node-outline {
+    border-color: khaki;
+}
+
+
+
+/* blademenu */
 
 .aujs-blademenu {
     /*background-color: darkblue !important;*/
@@ -53,3 +69,11 @@
     .aujs-blademenu-node.item.hilited .exp i {
         color: lightskyblue;
     }
+
+
+
+/* misc */
+
+.test-block {
+    margin: 20px;
+}

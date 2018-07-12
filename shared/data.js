@@ -16,8 +16,8 @@ DB.tree = {
                     "items": [
                         { "label": "Super Smart Phone", "icon": "fa fa-audio-description" },
                         { "label": "Thin Magic Mobile", "icon": "fa fa-sign-language" },
-                        { "label": "Performance Crusher", "icon": "fa fa-volume-control-phone" },
-                        { "label": "Best Futuristic Experience", "icon": "fa fa-tty" }
+                        { "label": "Performance Crusher", "icon": "fa fa-tty" },
+                        { "label": "Best Futuristic Experience" }
                     ]
                 },
                 {
@@ -121,7 +121,7 @@ DB.tree = {
                         { "label": "Matia Bazar", "icon": "fa fa-taxi" },
                         { "label": "Rolling Stones", "icon": "fa fa-train" },
                         { "label": "Bee Gees", "icon": "fa fa-truck" },
-                        { "label": "Giuseppe Verdi", "icon": "fa fa-wheelchair" },
+                        { "label": "Giuseppe Verdi", "icon": "fa fa-wheelchair", "id": "node_verdi" },
                         { "label": "Ramones", "icon": "fa fa-mars" },
                         { "label": "Tubeway army", "icon": "fa fa-venus" }
                     ]
