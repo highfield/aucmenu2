@@ -68,50 +68,24 @@ $(function () {
         }
     });
     drawerCtl.create();
-    //$(window).on('AuDocker:ready', function () {
-    //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.LEFT).setOptions({
-    //        render_lg: {
-    //            renderer: leftRenderer,
-    //            isAutoClose: false,
-    //            persistent: true
-    //        },
-    //        render_sm: {
-    //            renderer: leftRenderer,
-    //            isAutoClose: true,
-    //            persistent: true,
-    //            drawerSize: 200
-    //        }
-    //    });
 
-    //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).setOptions({
-    //        render_lg: {
-    //            renderer: rightRenderer,
-    //            persistent: true,
-    //            drawerSize: 450,
-    //        }
-    //    });
-    //});
 
     $('.button-left').on('click', function () {
         dl.toggle();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.LEFT).toggle();
     });
 
     $('.button-right').on('click', function () {
         dr.toggle();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).toggle();
     });
 
     $('.button-right-unload').on('click', function () {
         rightRenderer.destroy();
         dr.invalidateContent();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
     });
 
     $('.button-right-load').on('click', function () {
         rightRenderer.create();
         dr.invalidateContent();
-        //AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
     });
 
 });

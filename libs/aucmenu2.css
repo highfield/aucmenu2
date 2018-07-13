@@ -152,7 +152,7 @@
         /*width: 300px;*/
         top: -8px;
         bottom: -8px;
-        transform: translate3d(-110%, 0, 0);
+        /*transform: translate3d(-110%, 0, 0);*/
         pointer-events: none;
     }
 

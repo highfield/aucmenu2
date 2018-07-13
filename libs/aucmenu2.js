@@ -143,13 +143,17 @@ function _NS_(path) {
                 $('body').css('padding-' + side, padding);
             }
 
-            function preset(state) {
+            function preset(s) {
+                if (rendererInfo.customDrawer) {
+                    s = States.OPENED;
+                }
                 const elementStyle = element[0].style;
                 elementStyle.width = module.getActualOption('drawerSize') + 'px';
-                switch (state) {
+                switch (s) {
                     case States.OPENING:
                     case States.OPENED:
-                        elementStyle.visibility = '';
+                        elementStyle.visibility = rendererInfo.isAutoClose ? 'hidden' : '';
+                        //elementStyle.visibility = '';
                         elementStyle.transitionDuration = '0ms';
                         elementStyle.transitionProperty = 'transform';
                         elementStyle.transform = 'translate3d(0,0,0)';
@@ -185,6 +189,10 @@ function _NS_(path) {
                 get: function () { return rendered; }
             });
 
+            Object.defineProperty(module, 'rendererName', {
+                get: function () { return rendererInfo && rendererInfo.name; }
+            });
+
             Object.defineProperty(module, 'isAutoClose', {
                 get: function () { return !!rendererInfo.isAutoClose; }
             });
@@ -211,6 +219,7 @@ function _NS_(path) {
 
             module.open = function (coerce) {
                 if (coerce === true && rendererInfo.customDrawer) {
+                    //preset(States.OPENED);
                     setState(States.OPENED);
                 }
                 else {
@@ -218,6 +227,7 @@ function _NS_(path) {
                     if (rendererInfo.renderer) {
                         setState(States.OPENING);
                         if (rendererInfo.customDrawer) {
+                            preset(state);
                             rendererInfo.renderer.open(function () {
                                 setState(States.OPENED);
                             });
@@ -321,12 +331,20 @@ function _NS_(path) {
                             rendererInfo.renderer.create();
                         }
                         rendererInfo.renderer.attach(module);
+                        preset(state);
                         if (rendererInfo.customDrawer) {
+                            //if (rendererInfo.isAutoClose) {
+                            //    preset(States.OPENED);
+                            //    element.css('visibility', 'hidden');
+                            //}
+                            //setTimeout(function () {
+                            //    rendererInfo.renderer.preset(state);
+                            //}, yieldDuration);
                             rendererInfo.renderer.preset(state);
                         }
-                        else {
-                            preset(state);
-                        }
+                        //else {
+                        //    preset(state);
+                        //}
 
                         shouldNotify = true;
                         if (shouldRemoveOverlay && !rendererInfo.isAutoClose) {
@@ -1025,6 +1043,7 @@ function _NS_(path) {
         expSymbol: 'fas fa-chevron-right',
         hiliteSymbol: 'fas fa-chevron-circle-right fa-lg',
         transitionDuration: 300,    //ms
+        closeOnSelect: true,
     });
 
 
@@ -1035,7 +1054,7 @@ function _NS_(path) {
         const context = struct._getContext();
         const options = $.extend({}, ($.isPlainObject(opts) ? opts : {}), defaults);
 
-
+        var temp = 0;
         function BladeRenderer(owner, node) {
             const self = this;
             const baseClass = 'aujs-blademenu-node blade';
@@ -1043,6 +1062,7 @@ function _NS_(path) {
             this.rendered = false;
             this.element = null;
             this.itemCtr = null;
+            this.bid = temp++;
 
             this.render = function (bladeContainer) {
                 self.element = $('<div>', { class: baseClass + ' close' })
@@ -1062,13 +1082,7 @@ function _NS_(path) {
                 const bbtn = $('<a>', { href: '#' }).appendTo(bhost).on('click', function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    if (involvedBlades.length > 1) {
-                        involvedBlades.splice(0, 1);
-                        updateBlades();
-                    }
-                    else {
-                        module.close();
-                    }
+                    module.back();
                     return false;
                 });
 
@@ -1085,6 +1099,9 @@ function _NS_(path) {
                         e.preventDefault();
                         if (module.selector) {
                             module.selector.selection = node.id;
+                        }
+                        if (owner.getActualOption('closeOnSelect')) {
+                            module.close();
                         }
                         return false;
                     });
@@ -1198,6 +1215,9 @@ function _NS_(path) {
                     if (module.selector) {
                         module.selector.selection = node.id;
                     }
+                    if (owner.getActualOption('closeOnSelect')) {
+                        module.close();
+                    }
                     return false;
                 });
 
@@ -1275,7 +1295,12 @@ function _NS_(path) {
 
 
         const updateBlades = function () {
+            //console.log('ublades')
+            //involvedBlades.forEach(function (blade) {
+            //    console.log('inv='+blade.bid)
+            //});
             bladeList.forEach(function (blade) {
+                //console.log(blade.bid)
                 blade.indent(involvedBlades.indexOf(blade));
             });
             for (var id in nrendMap) {
@@ -1286,8 +1311,8 @@ function _NS_(path) {
 
 
         const restoreSelectedBlades = function () {
-            involvedBlades = [];
-            involvedNodes = [];
+            involvedBlades.length = 0;
+            involvedNodes.length = 0;
             if (module.isOpen) {
                 var selectedRenderer;
                 const selection = module.selector && module.selector.selection;
@@ -1370,7 +1395,7 @@ function _NS_(path) {
             rendered = false;
         }
 
-        var bladeList = [], involvedBlades = [], involvedNodes = [];
+        const bladeList = [], involvedBlades = [], involvedNodes = [];
         var nrendMap = {};
         module.render = function () {
             if (rendered) return;   //TEMP
@@ -1382,11 +1407,17 @@ function _NS_(path) {
             if (inner.length === 0) {
                 inner = $('<div>').appendTo(outer);
             }
-            inner.css('width', hook.getActualOption
-                ? hook.getActualOption('drawerSize')
-                : module.getActualOption('drawerSize')
-            );
 
+            const dw = hook.getActualOption
+                ? hook.getActualOption('drawerSize')
+                : module.getActualOption('drawerSize');
+
+            inner.css({
+                'width': dw,
+                'transform': 'translate3d(-' + (dw * 1.1) + 'px, 0, 0)'
+            });
+
+            //console.log('render')
             const vroot = {
                 id: '',
                 level: 0,
@@ -1395,6 +1426,7 @@ function _NS_(path) {
                 children: context.roots
             };
             const blade = new BladeRenderer(module, vroot);
+            bladeList.length = 0;
             bladeList.push(blade);
             blade.render(inner);
 
@@ -1431,8 +1463,8 @@ function _NS_(path) {
             if (state === AuJS.Drawer.States.OPENED) {
                 state = AuJS.Drawer.States.CLOSING;
                 hook.close && hook.close(true);
-                involvedBlades = [];
-                involvedNodes = [];
+                involvedBlades.length = 0;
+                involvedNodes.length = 0;
                 updateBlades();
                 setTimeout(function () {
                     state = AuJS.Drawer.States.CLOSED;
@@ -1447,6 +1479,8 @@ function _NS_(path) {
             state = s;
             switch (state) {
                 case AuJS.Drawer.States.OPENING:
+                case AuJS.Drawer.States.OPENED:
+                    //console.log('preset')
                     if (this.rendered) {
                         restoreSelectedBlades();
                     }
@@ -1458,20 +1492,34 @@ function _NS_(path) {
 
                 case AuJS.Drawer.States.CLOSING:
                 case AuJS.Drawer.States.CLOSED:
-                    involvedBlades = [];
-                    involvedNodes = [];
+                    involvedBlades.length = 0;
+                    involvedNodes.length = 0;
                     updateBlades();
                     state = AuJS.Drawer.States.CLOSED;
                     break;
             }
         }
 
+
+        module.back = function () {
+            if (state === AuJS.Drawer.States.OPENED) {
+                if (involvedBlades.length > 1) {
+                    involvedBlades.splice(0, 1);
+                    updateBlades();
+                }
+                else {
+                    module.close();
+                }
+            }
+        }
+
+
         module.destroy = function () {
             state = AuJS.Drawer.States.CLOSED;
             rendered = false;
-            involvedBlades = [];
-            involvedNodes = [];
-            bladeList = [];
+            involvedBlades.length = 0;
+            involvedNodes.length = 0;
+            bladeList.length = 0;
             nrendMap = {};
         }
 

@@ -22,8 +22,8 @@ $(function () {
     const selectionManager = AuJS.MenuSelectorSingle();
     selectionManager.addListener(function (selId) {
         const node = menu_struct.getNode(selId);
-        $('#sel_id').text(node && node.id);
-        $('#sel_lab').text(node && node.label);
+        $('#sel_id').text(node && node.id || '');
+        $('#sel_lab').text(node && node.label || '');
     });
 
 

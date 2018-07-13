@@ -69,6 +69,31 @@ $(function () {
      **/
     const selectionManager = AuJS.MenuSelectorSingle();
 
+    selectionManager.addListener(function (selId) {
+        //just display some info about the current selection
+        const node = menu_struct.getNode(selId);
+        $('#sel_id').text(node && node.id || '');
+        $('#sel_lab').text(node && node.label || '');
+    });
+
+
+    $('#sel_none').on('click', function () {
+        selectionManager.selection = null;
+    });
+
+    $('#sel_n1').on('click', function () {
+        selectionManager.selection = 'node_gig_led';
+    });
+
+    $('#sel_n2').on('click', function () {
+        selectionManager.selection = 'node_perez_prado';
+    });
+
+    $('#sel_n3').on('click', function () {
+        selectionManager.selection = 'node_verdi';
+    });
+
+
 
     /**
      * blade-menu renderer
@@ -93,11 +118,13 @@ $(function () {
     const drawerCtl = AuJS.Drawer.Controller();
     const dl = drawerCtl.add(AuJS.Drawer.Sides.LEFT, {
         render_lg: {
+            name: 'myTree',
             renderer: treeRenderer,
             isAutoClose: false,
             persistent: true
         },
         render_sm: {
+            name: 'myBlade',
             renderer: bladeRenderer,
             isAutoClose: true,
             persistent: true,
@@ -114,29 +141,6 @@ $(function () {
     });
     drawerCtl.create();
 
-    //$(window).on('AuDocker:ready', function () {
-    //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.LEFT).setOptions({
-    //        render_lg: {
-    //            renderer: treeRenderer,
-    //            isAutoClose: false,
-    //            persistent: true
-    //        },
-    //        render_sm: {
-    //            renderer: bladeRenderer,
-    //            isAutoClose: true,
-    //            persistent: true,
-    //            customDrawer: true
-    //        }
-    //    });
-
-    //    AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).setOptions({
-    //        render_lg: {
-    //            renderer: rightRenderer,
-    //            persistent: true
-    //        }
-    //    });
-    //});
-
 
     $('.button-left').on('click', function () {
         dl.toggle();
@@ -145,6 +149,23 @@ $(function () {
     $('.button-right').on('click', function () {
         dr.toggle();
     });
+
+
+
+    /**
+     * (bonus) Hammer.js setup
+     **/
+
+    const hammer = new Hammer(dl.element[0]);
+    hammer.get('swipe').set({
+        direction: Hammer.DIRECTION_LEFT
+    });
+    hammer.on('swipe', function () {
+        if (dl.rendererName === 'myBlade') {
+            bladeRenderer.back();
+        }
+    });
+
 
 
 });
