@@ -4,7 +4,7 @@ function _NS_(path) {
     var o = window;
     segms.forEach(function (s) {
         o = o[s] = o[s] || {};
-    })
+    });
     return o;
 }
 
@@ -32,7 +32,7 @@ function _NS_(path) {
 
     const defaults = Object.freeze({
         drawerSize: 300,            //px
-        transitionDuration: 300,    //ms
+        transitionDuration: 300     //ms
     });
 
 
@@ -70,16 +70,16 @@ function _NS_(path) {
             if (element.length === 0) {
                 element = $('<div>', { class: 'aujs-drawer-overlay' })
                     .css('display', 'none')
-                    .appendTo(bay)
+                    .appendTo(bay);
             }
             created = true;
-        }
+        };
 
         const busyItems = [];
         module.notify = function (item, coerce) {
-            const req = (typeof coerce === 'boolean')
+            const req = typeof coerce === 'boolean'
                 ? coerce
-                : (item.isAutoClose && item.state !== States.CLOSED);
+                : item.isAutoClose && item.state !== States.CLOSED;
 
             const ix = busyItems.indexOf(item);
             if (req) {
@@ -95,7 +95,7 @@ function _NS_(path) {
                 visible = newvis;
                 element.css('display', visible ? '' : 'none');
             }
-        }
+        };
 
         module.destroy = function () {
             if (bay) {
@@ -103,7 +103,7 @@ function _NS_(path) {
             }
             bay = element = null;
             created = false;
-        }
+        };
 
         return module;
     })();
@@ -125,6 +125,9 @@ function _NS_(path) {
                 if (state !== value) {
                     state = value;
                     NS.Overlay.notify(module);
+                    if ($.isFunction(options.onStateChanged)) {
+                        options.onStateChanged(state);
+                    }
                 }
             }
 
@@ -136,11 +139,14 @@ function _NS_(path) {
             }
 
             function indent(active) {
-                var padding = '';
-                if (active && !rendererInfo.isAutoClose) {
-                    padding = module.getActualOption('drawerSize');
+                if ($.isFunction(rendererInfo.indent)) {
+                    var padding = '';
+                    if (active && !rendererInfo.isAutoClose) {
+                        padding = module.getActualOption('drawerSize');
+                    }
+                    rendererInfo.indent(active, padding);
+                    //$('body').css('padding-' + side, padding);
                 }
-                $('body').css('padding-' + side, padding);
             }
 
             function preset(s) {
@@ -175,10 +181,10 @@ function _NS_(path) {
             const module = {};
 
             module.getActualOption = function (pname) {
-                return (rendererInfo[pname] > 0)
+                return rendererInfo[pname] > 0
                     ? rendererInfo[pname]
                     : defaults[pname];
-            }
+            };
 
             Object.defineProperty(module, 'side', {
                 get: function () { return side; }
@@ -210,12 +216,12 @@ function _NS_(path) {
                 if (rendered) return;
                 element = $('<div>', { class: 'aujs-drawer ' + side })
                     .css({
-                        'visibility': 'hidden',
+                        'visibility': 'hidden'
                     })
                     .appendTo(container);
                 rendered = true;
                 module.invalidateContent();
-            }
+            };
 
             module.open = function (coerce) {
                 if (coerce === true && rendererInfo.customDrawer) {
@@ -249,7 +255,7 @@ function _NS_(path) {
                         }
                     }
                 }
-            }
+            };
 
             module.close = function (coerce) {
                 if (coerce === true && rendererInfo.customDrawer) {
@@ -282,7 +288,7 @@ function _NS_(path) {
                         setState(States.CLOSED);
                     }
                 }
-            }
+            };
 
             module.toggle = function () {
                 if (state === States.CLOSED) {
@@ -291,17 +297,17 @@ function _NS_(path) {
                 else if (state === States.OPENED) {
                     module.close();
                 }
-            }
+            };
 
             module.invalidateContent = function () {
                 isContentDirty = true;
                 module.updateRenderer();
-            }
+            };
 
             module.updateRenderer = function () {
                 var shouldNotify = false, coerceValue;
                 const w = $(window).width();
-                const info = (w <= 600 && options.render_sm) || (w <= 960 && options.render_md) || options.render_lg;
+                const info = w <= 600 && options.render_sm || w <= 960 && options.render_md || options.render_lg;
                 if (!info || !info.renderer) {
                     if (rendererInfo.renderer) {
                         rendererInfo.renderer.detach(module);
@@ -317,7 +323,7 @@ function _NS_(path) {
                     rendererInfo = {};
                 }
                 else {
-                    if ((rendererInfo !== info) || isContentDirty) {
+                    if (rendererInfo !== info || isContentDirty) {
                         const shouldRemoveOverlay = rendererInfo.isAutoClose;
                         if (rendererInfo.renderer) {
                             rendererInfo.renderer.detach(module);
@@ -357,7 +363,7 @@ function _NS_(path) {
                 if (shouldNotify) {
                     NS.Overlay.notify(module, coerceValue);
                 }
-            }
+            };
 
             module.destroy = function () {
                 if (rendered) {
@@ -366,7 +372,7 @@ function _NS_(path) {
                 }
                 element = null;
                 rendered = false;
-            }
+            };
 
             return module;
         }
@@ -376,7 +382,7 @@ function _NS_(path) {
             drawers.forEach(function (d) {
                 d.updateRenderer();
             });
-        }
+        };
 
         const overlayClick = function (e) {
             if ($(e.target).closest('.aujs-drawer-overlay').length) {
@@ -386,7 +392,7 @@ function _NS_(path) {
                     }
                 });
             }
-        }
+        };
 
         const module = {};
 
@@ -408,7 +414,7 @@ function _NS_(path) {
             const item = DrawerItem(side, NS.Overlay.container, opts);
             drawers.push(item);
             return item;
-        }
+        };
 
         module.remove = function (item) {
             if (rendered) {
@@ -419,7 +425,7 @@ function _NS_(path) {
             if (ix >= 0) {
                 drawers.splice(ix, 1);
             }
-        }
+        };
 
 
         module.create = function () {
@@ -432,7 +438,7 @@ function _NS_(path) {
             $(NS.Overlay.container).on('click', overlayClick);
             $(window).on('resize', resize);
             rendered = true;
-        }
+        };
 
         module.destroy = function () {
             $(window).off('resize', resize);
@@ -442,10 +448,10 @@ function _NS_(path) {
                 d.destroy();
             });
             rendered = false;
-        }
+        };
 
         return module;
-    }
+    };
 
 })(_NS_('AuJS.Drawer'), jQuery);
 
@@ -456,8 +462,8 @@ function _NS_(path) {
     const uuid = (function () {
         var n = 0;
         return function () {
-            return 'aujs_id_' + (n++);
-        }
+            return 'aujs_id_' + n++;
+        };
     })();
 
 
@@ -473,11 +479,22 @@ function _NS_(path) {
          *  icon: (string)
          *  children: (array) list of ID-references to the children nodes
          */
-        function Node(context, id) {
+
+        function Node(context, id, label) {
             const self = this;
 
             Object.defineProperty(this, 'id', {
                 value: id,
+                writable: false
+            });
+
+            Object.defineProperty(this, 'label', {
+                value: label,
+                writable: false
+            });
+
+            Object.defineProperty(this, 'isSeparator', {
+                value: label === '-',
                 writable: false
             });
 
@@ -487,24 +504,31 @@ function _NS_(path) {
 
             this.parentId = null;
             this.level = 0;
-            this.label = null;
             this.icon = null;
             this.children = [];
+
+            this.getFirstChild = function () {
+                if (!self.children.length) return;
+                const id1 = self.children[0];
+                const id = Array.isArray(id1) ? id1[0] : id1;
+                return context.nodeMap[id];
+            };
         }
 
 
         function scan(source, parentId, level) {
             if ($.isPlainObject(source)) {
-                const id = source.id || uuid();
+                const id = keySelector && keySelector(source) || uuid();
                 var node = context.nodeMap[id];
                 if (!node) {
-                    node = context.nodeMap[id] = new Node(context, id);
+                    node = context.nodeMap[id] = new Node(context, id, source.label);
                 }
                 node.parentId = parentId;
                 node.level = level;
-                node.label = source.label;
-                node.icon = source.icon;
-                node.children = Array.isArray(source.items) ? scan(source.items, id, level + 1) : [];
+                if (!node.isSeparator) {
+                    node.icon = source.icon;
+                    node.children = Array.isArray(source.items) ? scan(source.items, id, level + 1) : [];
+                }
                 return [id];
             }
             else if (Array.isArray(source)) {
@@ -523,16 +547,19 @@ function _NS_(path) {
         if (!$.isPlainObject(options)) {
             options = {};
         }
+        const keySelector = $.isFunction(options.keySelector)
+            ? options.keySelector
+            : function (src) { return src.id; };
 
         const context = {
             roots: [],
             nodeMap: {}
-        }
+        };
         const module = {};
 
         module._getContext = function () {
             return context;
-        }
+        };
 
         module.getNode = function (arg) {
             if ($.isFunction(arg)) {
@@ -544,21 +571,21 @@ function _NS_(path) {
             else if (typeof arg === 'string') {
                 return context.nodeMap[arg];
             }
-        }
+        };
 
         module.getNodes = function () {
             return context.nodeMap.values();
-        }
+        };
 
         var xdata = {};
-        module.getData = function () { return xdata; }
+        module.getData = function () { return xdata; };
         module.setData = function (data) {
             xdata = data || {};
             context.roots = scan(xdata, null, 0);
-        }
+        };
 
         return module;
-    }
+    };
 
 })(_NS_('AuJS'), jQuery);
 
@@ -574,7 +601,7 @@ function _NS_(path) {
         module.addListener = function (ls) {
             if (!ls || listeners.indexOf(ls) >= 0) return;
             listeners.push(ls);
-        }
+        };
 
         module.removeListener = function (ls) {
             if (!ls) return;
@@ -582,7 +609,7 @@ function _NS_(path) {
             if (ix >= 0) {
                 listeners.splice(ix, 1);
             }
-        }
+        };
 
         var selection;
         Object.defineProperty(module, 'selection', {
@@ -603,7 +630,7 @@ function _NS_(path) {
         });
 
         return module;
-    }
+    };
 
 
 })(_NS_('AuJS'), jQuery);
@@ -619,6 +646,7 @@ function _NS_(path) {
         iconWidth: 24,              //px
         expSymbol: 'fas fa-chevron-right',
         transitionDuration: 300,    //ms
+        onSelection: null
     });
 
 
@@ -627,7 +655,7 @@ function _NS_(path) {
         const yieldDuration = 10;   //ms
 
         const context = struct._getContext();
-        const options = $.extend({}, ($.isPlainObject(opts) ? opts : {}), defaults);
+        const options = $.extend({}, defaults, $.isPlainObject(opts) ? opts : {});
 
 
         function NodeRenderer(owner, node) {
@@ -663,106 +691,124 @@ function _NS_(path) {
                 self.element = $('<div>', { class: 'aujs-treemenu-node level' + node.level, 'data-id': node.id })
                     .appendTo(parentElement);
 
-                selected && self.element.addClass('selected');
-
-                const header = $('<div>', { class: 'aujs-treemenu-node-header' }).css({
-                    'height': owner.getActualOption('itemHeight')
-                }).appendTo(self.element);
-
-
-                //block to host the expander button, whereas useful
-                const xhost = $('<div>', { class: 'exp' }).css({
-                    'display': (extras.allocateExpanders ? '' : 'none'),
-                    'min-width': owner.getActualOption('expanderWidth'),
-                }).appendTo(header);
-
-                //main button, as the node selection button, and related handler
-                const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (module.selector) {
-                        module.selector.selection = node.id;
-                    }
-                    return false;
-                });
-
-                if (!extras.allocateExpanders) {
-                    mbtn.css('margin-left', 4);
+                if (node.isSeparator) {
+                    self.element.addClass('aujs-treemenu-separator');
                 }
+                else {
+                    selected && self.element.addClass('selected');
 
-                //node main face: text and optional icon
-                const inner = $('<div>', { class: 'aujs-treemenu-node-caption' }).appendTo(mbtn);
-                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
-                //const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+                    const header = $('<div>', { class: 'aujs-treemenu-node-header' }).css({
+                        'height': owner.getActualOption('itemHeight')
+                    }).appendTo(self.element);
 
-                if (node.icon) {
-                    const hostIcon = $('<div>', { class: 'icon' }).css({
-                        'min-width': owner.getActualOption('iconWidth')
-                    }).appendTo(inner);
-                    $('<i>', { class: node.icon }).appendTo(hostIcon);
-                }
 
-                //outline-bay to host the children's outlines
-                self.outlineBay = $('<div>', {
-                    class: 'aujs-treemenu-node-outline-bay'
-                }).appendTo(self.element);
+                    //block to host the expander button, whereas useful
+                    const xhost = $('<div>', { class: 'aujs-exp' }).css({
+                        //'display': extras.allocateExpanders ? '' : 'none',
+                        'min-width': owner.getActualOption('expanderWidth')
+                    }).appendTo(header);
 
-                if (parentOutlineBay) {
-                    const exp2 = owner.getActualOption('expanderWidth') / 2;
-                    self.outline = $('<div>', { class: 'aujs-treemenu-node-outline' }).css({
-                        'left': exp2,
-                        'width': owner.getActualOption('indentWidth') - exp2,
-                        'top': 8 - owner.getActualOption('itemHeight') / 2
-                    }).appendTo(parentOutlineBay);
-                }
-
-                //children nodes host
-                self.itemsCtr = $('<div>', { class: 'aujs-treemenu-node-items' }).css({
-                    'margin-left': owner.getActualOption('indentWidth')
-                }).appendTo(self.element);
-
-                if (node.expandable) {
-                    //expander button and related handler
-                    const xbtn = $('<a>', { href: '#' }).appendTo(xhost).on('click', function (e) {
+                    //main button, as the node selection button, and related handler
+                    const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        self.cmdexp();
+                        const args = {
+                            renderer: self,
+                            node: node,
+                            idToSelect: node.id
+                        };
+                        const handled = options.onSelection && options.onSelection(args);
+                        if (!handled) {
+                            if (module.selector) {
+                                module.selector.selection = args.idToSelect;
+                            }
+                        }
                         return false;
                     });
 
-                    const xbtnContent = $('<i>', {
-                        class: owner.getActualOption('expSymbol')
-                    }).appendTo(xbtn);
-                    const xbtnContentStyle = xbtnContent[0].style;
-
-                    const itemsCtrStyle = self.itemsCtr[0].style;
-
-                    if (self.expanded) {
-                        state = AuJS.Drawer.States.OPENED;
-                        xbtnContentStyle.transition = '';
-                        xbtnContentStyle.transform = 'rotate(90deg)';
-                    }
-                    else {
-                        state = AuJS.Drawer.States.CLOSED;
-                        itemsCtrStyle.transition = '';
-                        itemsCtrStyle.opacity = 0;
-                        itemsCtrStyle.height = 0;
+                    if (!extras.allocateExpanders) {
+                        mbtn.css('margin-left', 4);
                     }
 
-                    const childrenExtras = {
-                        allocateExpanders: isAnyChildExpandable(node.children)
+                    //node main face: text and optional icon
+                    const inner = $('<div>', { class: 'aujs-treemenu-node-caption' }).appendTo(mbtn);
+                    const hostLabel = $('<span>', { class: 'aujs-label' }).appendTo(inner).text(node.label);
+                    //const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+                    if (node.icon) {
+                        const hostIcon = $('<div>', { class: 'aujs-icon' }).css({
+                            'min-width': owner.getActualOption('iconWidth')
+                        }).appendTo(inner);
+                        $('<i>', { class: node.icon }).appendTo(hostIcon);
                     }
 
-                    node.children.forEach(function (cid) {
-                        const child = context.nodeMap[cid];
-                        const nrend = nrendMap[cid] = new NodeRenderer(owner, child);
-                        nrend.render(self.itemsCtr, self.outlineBay, childrenExtras);
-                    });
+                    //outline-bay to host the children's outlines
+                    self.outlineBay = $('<div>', {
+                        class: 'aujs-treemenu-node-outline-bay'
+                    }).appendTo(self.element);
+
+                    if (parentOutlineBay) {
+                        const exp2 = owner.getActualOption('expanderWidth') / 2;
+                        self.outline = $('<div>', { class: 'aujs-treemenu-node-outline' }).css({
+                            'left': exp2,
+                            'width': owner.getActualOption('indentWidth') - exp2,
+                            'top': 8 - owner.getActualOption('itemHeight') / 2
+                        }).appendTo(parentOutlineBay);
+                    }
+
+                    //children nodes host
+                    self.itemsCtr = $('<div>', { class: 'aujs-treemenu-node-items' }).css({
+                        'margin-left': owner.getActualOption('indentWidth')
+                    }).appendTo(self.element);
+
+                    var expandHandler = null;
+                    if (node.expandable) {
+                        //expander button and related handler
+                        expandHandler = function () {
+                            self.cmdexp();
+                        };
+
+                        const xbtn = $('<a>', { href: '#' }).appendTo(xhost).on('click', function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            expandHandler();
+                            return false;
+                        });
+
+                        const xbtnContent = $('<i>', {
+                            class: owner.getActualOption('expSymbol')
+                        }).appendTo(xbtn);
+                        const xbtnContentStyle = xbtnContent[0].style;
+
+                        const itemsCtrStyle = self.itemsCtr[0].style;
+
+                        if (self.expanded) {
+                            state = AuJS.Drawer.States.OPENED;
+                            xbtnContentStyle.transition = '';
+                            xbtnContentStyle.transform = 'rotate(90deg)';
+                        }
+                        else {
+                            state = AuJS.Drawer.States.CLOSED;
+                            itemsCtrStyle.transition = '';
+                            itemsCtrStyle.opacity = 0;
+                            itemsCtrStyle.height = 0;
+                        }
+
+                        const childrenExtras = {
+                            allocateExpanders: isAnyChildExpandable(node.children)
+                        };
+
+                        node.children.forEach(function (cid) {
+                            const child = context.nodeMap[cid];
+                            const nrend = nrendMap[cid] = new NodeRenderer(owner, child);
+                            nrend.render(self.itemsCtr, self.outlineBay, childrenExtras);
+                        });
+                    }
                 }
 
                 rendered = true;
                 setTimeout(self.updateChildrenOutlines, yieldDuration);
-            }
+            };
 
             this.updateSiblingOutlines = function () {
                 var parent = nrendMap[node.parentId];
@@ -770,29 +816,29 @@ function _NS_(path) {
                     parent.updateSiblingOutlines();
                     parent.updateChildrenOutlines();
                 }
-            }
+            };
 
             this.updateChildrenOutlines = function () {
                 if (!rendered) return;
                 var h = owner.getActualOption('itemHeight');
                 node.children.forEach(function (cid) {
                     const child = nrendMap[cid];
-                    child.outline.css('height', h - 4);
+                    child.outline && child.outline.css('height', h - 4);
                     h += child.element[0].getBoundingClientRect().height;
                 });
                 //self.showOutlineBay(self.expanded, false);
-                self.outlineBay.css('opacity', self.expanded ? 1 : 0);
-            }
+                self.outlineBay && self.outlineBay.css('opacity', self.expanded ? 1 : 0);
+            };
 
             this.showOutlineBay = function (coerce) {
                 if (!rendered) return;
-                const f = (typeof coerce === 'boolean') ? coerce : self.expanded;
-                self.outlineBay.css('opacity', f ? 1 : 0);
+                const f = typeof coerce === 'boolean' ? coerce : self.expanded;
+                self.outlineBay && self.outlineBay.css('opacity', f ? 1 : 0);
                 var parent = nrendMap[node.parentId];
                 if (parent) {
                     parent.showOutlineBay(coerce);
                 }
-            }
+            };
 
             this.expand = function () {
                 if (!rendered) {
@@ -804,7 +850,7 @@ function _NS_(path) {
 
                     const button = self.element
                         .children('.aujs-treemenu-node-header')
-                        .find('.exp > a')
+                        .find('.aujs-exp > a')
                         .children();
                     const buttonStyle = button[0].style;
                     buttonStyle.transitionDuration = owner.getActualOption('transitionDuration') + 'ms';
@@ -830,7 +876,7 @@ function _NS_(path) {
                         }, owner.getActualOption('transitionDuration'));
                     }, yieldDuration);
                 }
-            }
+            };
 
             this.collapse = function () {
                 if (!rendered) {
@@ -842,7 +888,7 @@ function _NS_(path) {
 
                     const button = self.element
                         .children('.aujs-treemenu-node-header')
-                        .find('.exp > a')
+                        .find('.aujs-exp > a')
                         .children();
                     const buttonStyle = button[0].style;
                     buttonStyle.transitionDuration = owner.getActualOption('transitionDuration') + 'ms';
@@ -867,7 +913,7 @@ function _NS_(path) {
                         }, owner.getActualOption('transitionDuration'));
                     }, yieldDuration);
                 }
-            }
+            };
 
             this.cmdexp = function () {
                 if (state === AuJS.Drawer.States.CLOSED) {
@@ -876,7 +922,7 @@ function _NS_(path) {
                 else if (state === AuJS.Drawer.States.OPENED) {
                     self.collapse();
                 }
-            }
+            };
 
             this.expandParents = function () {
                 self.expand();
@@ -884,7 +930,7 @@ function _NS_(path) {
                 if (parent) {
                     parent.expandParents();
                 }
-            }
+            };
 
             this.select = function (value) {
                 value = !!value;
@@ -903,7 +949,7 @@ function _NS_(path) {
                     self.expandParents();
                     self.bringIntoView();
                 }
-            }
+            };
 
             this.bringIntoView = function () {
                 if (!rendered) return;
@@ -920,7 +966,7 @@ function _NS_(path) {
                         outerElement.scrollTop = outerElement.scrollTop + (selfRect.top + selfRect.height - outerRect.top - outerRect.height) * excess;
                     }
                 }, owner.getActualOption('transitionDuration') * excess);
-            }
+            };
 
             this.getChildrenHeight = function () {
                 var h = 0;
@@ -929,7 +975,7 @@ function _NS_(path) {
                         h += $(this)[0].getBoundingClientRect().height;
                     });
                 return h;
-            }
+            };
         }
 
 
@@ -939,20 +985,20 @@ function _NS_(path) {
                 if (child.expandable) return true;
             }
             return false;
-        }
+        };
 
         const selector_onselect = function (selection) {
             for (var id in nrendMap) {
                 nrendMap[id].select(id === selection);
             }
-        }
+        };
 
 
         const module = {};
 
         module.getActualOption = function (pname) {
             return options[pname];
-        }
+        };
 
         var selector;
         Object.defineProperty(module, 'selector', {
@@ -980,7 +1026,7 @@ function _NS_(path) {
                 hook = h;
                 module.render();
             }
-        }
+        };
 
         module.detach = function (h) {
             if (hook) {
@@ -988,7 +1034,7 @@ function _NS_(path) {
                 hook = null;
             }
             rendered = false;
-        }
+        };
 
         var nrendMap = {};
         module.render = function () {
@@ -1000,7 +1046,7 @@ function _NS_(path) {
 
             const extras = {
                 allocateExpanders: isAnyChildExpandable(context.roots)
-            }
+            };
 
             context.roots.forEach(function (id) {
                 const node = context.nodeMap[id];
@@ -1015,16 +1061,16 @@ function _NS_(path) {
             }
 
             rendered = true;
-        }
+        };
 
 
         module.destroy = function () {
             rendered = false;
             nrendMap = {};
-        }
+        };
 
         return module;
-    }
+    };
 
 
 
@@ -1044,6 +1090,9 @@ function _NS_(path) {
         hiliteSymbol: 'fas fa-chevron-circle-right fa-lg',
         transitionDuration: 300,    //ms
         closeOnSelect: true,
+        expandWhenSelect: true,
+        backWhenSelect: true,
+        rootBackLabel: 'Close menu'
     });
 
 
@@ -1052,7 +1101,7 @@ function _NS_(path) {
         const yieldDuration = 10;   //ms
 
         const context = struct._getContext();
-        const options = $.extend({}, ($.isPlainObject(opts) ? opts : {}), defaults);
+        const options = $.extend({}, defaults, $.isPlainObject(opts) ? opts : {});
 
         var temp = 0;
         function BladeRenderer(owner, node) {
@@ -1068,14 +1117,14 @@ function _NS_(path) {
                 self.element = $('<div>', { class: baseClass + ' close' })
                     .appendTo(bladeContainer);
 
-                const header = $('<div>', { class: 'header' }).css({
+                const header = $('<div>', { class: 'aujs-header' }).css({
                     'min-height': owner.getActualOption('itemHeight')
                 }).appendTo(self.element);
 
 
                 //block to host the back button
                 const bhost = $('<div>', { class: 'back' }).css({
-                    'min-width': owner.getActualOption('expanderWidth'),
+                    'min-width': owner.getActualOption('expanderWidth')
                 }).appendTo(header);
 
                 //back button and related handler
@@ -1092,35 +1141,37 @@ function _NS_(path) {
 
                 //main button, as the node selection button, and related handler
                 const mbtn = $('<a>').appendTo(header);
-
-                if (node.id) {
-                    mbtn.attr('href', '#').on('click', function (e) {
-                        e.stopPropagation();
-                        e.preventDefault();
+                mbtn.attr('href', '#').on('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (!node.id || options.backWhenSelect) {
+                        module.back();
+                    }
+                    else {
                         if (module.selector) {
                             module.selector.selection = node.id;
                         }
                         if (owner.getActualOption('closeOnSelect')) {
                             module.close();
                         }
-                        return false;
-                    });
-                }
+                    }
+                    return false;
+                });
 
                 //node main face: text and optional icon
-                const inner = $('<div>', { class: 'caption' }).appendTo(mbtn);
-                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
+                const inner = $('<div>', { class: 'aujs-caption' }).appendTo(mbtn);
+                const hostLabel = $('<span>', { class: 'aujs-label' }).appendTo(inner).text(node.label);
                 //const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
 
                 if (node.icon) {
-                    const hostIcon = $('<div>', { class: 'icon' }).css({
+                    const hostIcon = $('<div>', { class: 'aujs-icon' }).css({
                         'min-width': owner.getActualOption('iconWidth')
                     }).appendTo(inner);
                     $('<i>', { class: node.icon }).appendTo(hostIcon);
                 }
 
                 //children nodes host
-                self.itemsCtr = $('<div>', { class: 'items' }).appendTo(self.element);
+                self.itemsCtr = $('<div>', { class: 'aujs-items' }).appendTo(self.element);
 
                 node.children.forEach(function (id) {
                     const child = context.nodeMap[id];
@@ -1129,7 +1180,7 @@ function _NS_(path) {
                 });
 
                 self.rendered = true;
-            }
+            };
 
             var indentLevel = -1;
             this.indent = function (ilev) {
@@ -1143,7 +1194,7 @@ function _NS_(path) {
                         el.className = baseClass + ' close';
                     }
                 }
-            }
+            };
         }
 
 
@@ -1167,7 +1218,7 @@ function _NS_(path) {
                         self.xbtnContent1.css('display', f ? '' : 'none');
                     }
                 }
-            }
+            };
 
             Object.defineProperty(this, 'blade', {
                 value: blade,
@@ -1196,68 +1247,83 @@ function _NS_(path) {
                 self.element = $('<div>', { class: 'aujs-blademenu-node item', 'data-id': node.id })
                     .appendTo(parentElement);
 
-                selected && self.element.addClass('selected');
-
-                const header = $('<div>', { class: 'header' }).css({
-                    'height': owner.getActualOption('itemHeight')
-                }).appendTo(self.element);
-
-
-                //block to host the expander button, whereas useful
-                const xhost = $('<div>', { class: 'exp' }).css({
-                    'min-width': owner.getActualOption('expanderWidth'),
-                }).appendTo(header);
-
-                //main button, as the node selection button, and related handler
-                const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (module.selector) {
-                        module.selector.selection = node.id;
-                    }
-                    if (owner.getActualOption('closeOnSelect')) {
-                        module.close();
-                    }
-                    return false;
-                });
-
-                //node main face: text and optional icon
-                const inner = $('<div>', { class: 'caption' }).appendTo(mbtn);
-                const hostLabel = $('<span>', { class: 'label' }).appendTo(inner).text(node.label);
-                //const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
-
-                if (node.icon) {
-                    const hostIcon = $('<div>', { class: 'icon' }).css({
-                        'min-width': owner.getActualOption('iconWidth')
-                    }).appendTo(inner);
-                    $('<i>', { class: node.icon }).appendTo(hostIcon);
+                if (node.isSeparator) {
+                    self.element.addClass('aujs-blademenu-separator');
                 }
+                else {
+                    selected && self.element.addClass('selected');
 
-                if (node.children.length) {
-                    const childBlade = new BladeRenderer(owner, node);
-                    bladeList.push(childBlade);
-                    childBlade.render(bladeContainer);
+                    const header = $('<div>', { class: 'aujs-header' }).css({
+                        'height': owner.getActualOption('itemHeight')
+                    }).appendTo(self.element);
 
-                    //expander button and related handler
-                    const xbtn = $('<a>', { href: '#' }).appendTo(xhost).on('click', function (e) {
+
+                    //block to host the expander button, whereas useful
+                    const xhost = $('<div>', { class: 'aujs-exp' }).css({
+                        'min-width': owner.getActualOption('expanderWidth')
+                    }).appendTo(header);
+
+                    //main button, as the node selection button, and related handler
+                    const mbtn = $('<a>', { href: '#' }).appendTo(header).on('click', function (e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        involvedBlades.unshift(childBlade);
-                        updateBlades();
+                        if (expandHandler && options.expandWhenSelect) {
+                            expandHandler();
+                        }
+                        else {
+                            if (module.selector) {
+                                module.selector.selection = node.id;
+                            }
+                            if (owner.getActualOption('closeOnSelect')) {
+                                module.close();
+                            }
+                        }
                         return false;
                     });
 
-                    self.xbtnContent0 = $('<i>', {
-                        class: owner.getActualOption('expSymbol')
-                    }).css('display', 'none').appendTo(xbtn);
-                    self.xbtnContent1 = $('<i>', {
-                        class: owner.getActualOption('hiliteSymbol')
-                    }).css('display', 'none').appendTo(xbtn);
+                    //node main face: text and optional icon
+                    const inner = $('<div>', { class: 'aujs-caption' }).appendTo(mbtn);
+                    const hostLabel = $('<span>', { class: 'aujs-label' }).appendTo(inner).text(node.label);
+                    //const hostIcon = $('<div>', { class: 'icon' }).appendTo(inner);
+
+                    if (node.icon) {
+                        const hostIcon = $('<div>', { class: 'aujs-icon' }).css({
+                            'min-width': owner.getActualOption('iconWidth')
+                        }).appendTo(inner);
+                        $('<i>', { class: node.icon }).appendTo(hostIcon);
+                    }
+
+                    var expandHandler = null;
+                    if (node.children.length) {
+                        const childBlade = new BladeRenderer(owner, node);
+                        bladeList.push(childBlade);
+                        childBlade.render(bladeContainer);
+
+                        //expander button and related handler
+                        expandHandler = function () {
+                            involvedBlades.unshift(childBlade);
+                            updateBlades();
+                        };
+
+                        const xbtn = $('<a>', { href: '#' }).appendTo(xhost).on('click', function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            expandHandler();
+                            return false;
+                        });
+
+                        self.xbtnContent0 = $('<i>', {
+                            class: owner.getActualOption('expSymbol')
+                        }).css('display', 'none').appendTo(xbtn);
+                        self.xbtnContent1 = $('<i>', {
+                            class: owner.getActualOption('hiliteSymbol')
+                        }).css('display', 'none').appendTo(xbtn);
+                    }
                 }
 
                 self.rendered = true;
                 renderSelection();
-            }
+            };
 
             this.select = function (value) {
                 value = !!value;
@@ -1265,7 +1331,7 @@ function _NS_(path) {
                     selected = value;
                     renderSelection();
                 }
-            }
+            };
 
             this.hilite = function (value) {
                 value = !!value;
@@ -1273,7 +1339,7 @@ function _NS_(path) {
                     hilited = value;
                     renderSelection();
                 }
-            }
+            };
 
             this.bringIntoView = function () {
                 if (!self.rendered) return;
@@ -1290,7 +1356,7 @@ function _NS_(path) {
                         outerElement.scrollTop = outerElement.scrollTop + (selfRect.top + selfRect.height - outerRect.top - outerRect.height) * excess;
                     }
                 }, owner.getActualOption('transitionDuration') * excess);
-            }
+            };
         }
 
 
@@ -1307,7 +1373,7 @@ function _NS_(path) {
                 const nr = nrendMap[id];
                 nr.hilite(involvedNodes.indexOf(nr) >= 0);
             }
-        }
+        };
 
 
         const restoreSelectedBlades = function () {
@@ -1336,7 +1402,7 @@ function _NS_(path) {
             involvedNodes.forEach(function (nr) {
                 nr.bringIntoView();
             });
-        }
+        };
 
 
         const selector_onselect = function (selection) {
@@ -1344,14 +1410,14 @@ function _NS_(path) {
                 nrendMap[id].select(id === selection);
             }
             restoreSelectedBlades();
-        }
+        };
 
 
         const module = {};
 
         module.getActualOption = function (pname) {
             return options[pname];
-        }
+        };
 
         var selector;
         Object.defineProperty(module, 'selector', {
@@ -1376,7 +1442,7 @@ function _NS_(path) {
 
         module.create = function () {
             //
-        }
+        };
 
         var hook;
         module.attach = function (h) {
@@ -1384,7 +1450,7 @@ function _NS_(path) {
                 hook = h;
                 module.render();
             }
-        }
+        };
 
         module.detach = function (h) {
             if (hook) {
@@ -1393,7 +1459,7 @@ function _NS_(path) {
             }
             state = AuJS.Drawer.States.CLOSED;
             rendered = false;
-        }
+        };
 
         const bladeList = [], involvedBlades = [], involvedNodes = [];
         var nrendMap = {};
@@ -1414,14 +1480,14 @@ function _NS_(path) {
 
             inner.css({
                 'width': dw,
-                'transform': 'translate3d(-' + (dw * 1.1) + 'px, 0, 0)'
+                'transform': 'translate3d(-' + dw * 1.1 + 'px, 0, 0)'
             });
 
             //console.log('render')
             const vroot = {
                 id: '',
                 level: 0,
-                label: 'Menu title',
+                label: options.rootBackLabel,
                 icon: '',
                 children: context.roots
             };
@@ -1438,7 +1504,7 @@ function _NS_(path) {
 
             rendered = true;
             setTimeout(restoreSelectedBlades, yieldDuration);
-        }
+        };
 
 
         var state = AuJS.Drawer.States.CLOSED;
@@ -1456,7 +1522,7 @@ function _NS_(path) {
                     if ($.isFunction(cb)) cb();
                 }, module.getActualOption('transitionDuration'));
             }
-        }
+        };
 
 
         module.close = function (cb) {
@@ -1471,7 +1537,7 @@ function _NS_(path) {
                     if ($.isFunction(cb)) cb();
                 }, module.getActualOption('transitionDuration'));
             }
-        }
+        };
 
 
         module.preset = function (s) {
@@ -1498,7 +1564,7 @@ function _NS_(path) {
                     state = AuJS.Drawer.States.CLOSED;
                     break;
             }
-        }
+        };
 
 
         module.back = function () {
@@ -1511,7 +1577,7 @@ function _NS_(path) {
                     module.close();
                 }
             }
-        }
+        };
 
 
         module.destroy = function () {
@@ -1521,10 +1587,10 @@ function _NS_(path) {
             involvedNodes.length = 0;
             bladeList.length = 0;
             nrendMap = {};
-        }
+        };
 
         return module;
-    }
+    };
 
 
 
