@@ -1,0 +1,97 @@
+
+/*
+    aujs-treemenu
+*/
+
+.aujs-treemenu {
+    position: relative;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.aujs-treemenu-node {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+    .aujs-treemenu-node.selected > .aujs-treemenu-node-header {
+        background-color: lightcyan;
+    }
+
+.aujs-treemenu-node-header {
+    display: flex;
+    flex-direction: row;
+    padding: 4px 8px 4px 0px;
+}
+
+    .aujs-treemenu-node-header > .aujs-exp {
+        /*min-width: 32px;*/
+        display: flex;
+    }
+
+        .aujs-treemenu-node-header > .aujs-exp > a {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .aujs-treemenu-node-header > a {
+        flex-grow: 1;
+        overflow-x: hidden;
+        text-decoration: none;
+        color: inherit;
+        /*margin-left: 4px;*/
+    }
+
+.aujs-treemenu-node-caption {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+}
+
+    .aujs-treemenu-node-caption > .aujs-label {
+        flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .aujs-treemenu-node-caption > .aujs-icon {
+        /*min-width: 24px;*/
+        text-align: center;
+        margin: auto 4px;
+    }
+
+.aujs-treemenu-node-items {
+    /*margin-left: 24px;*/
+    overflow-y: hidden;
+}
+
+.aujs-treemenu-node-outline-bay {
+    position: relative;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 100ms;
+}
+
+.aujs-treemenu-node-outline {
+    position: absolute;
+    /*left: 15px;*/
+    /*top: -12px;*/
+    /*width: 15px;*/
+    border-color: gray;
+    border-style: solid;
+    border-width: 0 0 1px 1px;
+}
+
+.aujs-treemenu-separator {
+    border-bottom: solid 5px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,30 @@
+{
+  "name": "aucmenu2",
+  "version": "1.0.0",
+  "description": "A multi-level menu that allows (almost) endless nesting of navigation elements.",
+  "main": "./libs/dist/publish.js",
+  "dependencies": {},
+  "devDependencies": {
+    "uglifycss": "^0.0.29",
+    "uglify-es": "^3.3.9"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/highfield/aucmenu2.git"
+  },
+  "keywords": [
+    "jquery",
+    "menu",
+    "tree",
+    "blade"
+  ],
+  "author": "Mario Vernari",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/highfield/aucmenu2/issues"
+  },
+  "homepage": "https://github.com/highfield/aucmenu2#readme"
+}
