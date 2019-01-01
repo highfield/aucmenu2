@@ -22,7 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  **/
 
-(function (NS, $) {
+//template: https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery', 'AuJS'], function (jquery, aujs) {
+            if (!jquery.fn) jquery.fn = {}; // webpack server rendering
+            return factory(jquery, aujs);
+        });
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
+        if (!jQuery) {
+            jQuery = require('jquery');
+            if (!jQuery.fn) jQuery.fn = {};
+        }
+        var aujs = typeof window !== 'undefined' && typeof window.AuJS !== 'undefined' ? window.AuJS : require('AuJS');
+        module.exports = factory(jQuery, aujs);
+    } else {
+        // Browser globals
+        root.AuJS = root.AuJS || {};
+        root.AuJS.BladeMenuRenderer = factory(root.jQuery, root.AuJS);
+    }
+}(typeof self !== 'undefined' ? self : this, function ($, AuJS) {
     'use strict';
 
     const defaults = Object.freeze({
@@ -41,7 +65,7 @@ THE SOFTWARE.
     });
 
 
-    NS.BladeMenuRenderer = function (struct, opts) {
+    const BladeMenuRenderer = function (struct, opts) {
 
         const yieldDuration = 10;   //ms
 
@@ -539,5 +563,8 @@ THE SOFTWARE.
 
 
 
-})(window._AuJS_NS_('AuJS'), jQuery);
-
+    // Just return a value to define the module export.
+    // This example returns an object, but the module
+    // can return a function as the exported value.
+    return BladeMenuRenderer;
+}));

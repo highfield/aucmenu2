@@ -22,18 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  **/
 
-(function () {
-    'use strict';
-    if (!window._AuJS_NS_) {
-        window._AuJS_NS_ = function (path) {
-            var segms = path.split('.');
-            var o = window;
-            segms.forEach(function (s) {
-                o = o[s] = o[s] || {};
-            });
-            return o;
-        };
-    }
-})();
+//(function () {
+//    'use strict';
+//    if (!window._AuJS_NS_) {
+//        window._AuJS_NS_ = function (path) {
+//            var segms = path.split('.');
+//            var o = window;
+//            segms.forEach(function (s) {
+//                o = o[s] = o[s] || {};
+//            });
+//            return o;
+//        };
+//    }
+//})();
 
 

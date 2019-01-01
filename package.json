@@ -1,6 +1,6 @@
 {
   "name": "aucmenu2",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A multi-level menu that allows (almost) endless nesting of navigation elements.",
   "main": "./libs/aucmenu2.js",
   "module": "./libs/dist/aucmenu2.min.js",

@@ -22,7 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  **/
 
-(function (NS, $) {
+//template: https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], function (jquery) {
+            if (!jquery.fn) jquery.fn = {}; // webpack server rendering
+            return factory(jquery);
+        });
+    } else if (typeof module === 'object' && module.exports) {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
+        if (!jQuery) {
+            jQuery = require('jquery');
+            if (!jQuery.fn) jQuery.fn = {};
+        }
+        module.exports = factory(jQuery);
+    } else {
+        // Browser globals
+        root.AuJS = root.AuJS || {};
+        root.AuJS.Drawer = factory(root.jQuery);
+    }
+}(typeof self !== 'undefined' ? self : this, function ($) {
     'use strict';
 
 
@@ -30,7 +53,6 @@ THE SOFTWARE.
         LEFT: 'left',
         RIGHT: 'right'
     });
-    NS.Sides = Sides;
 
 
     const States = Object.freeze({
@@ -39,7 +61,6 @@ THE SOFTWARE.
         OPENED: 'opened',
         CLOSING: 'closing'
     });
-    NS.States = States;
 
 
     const defaults = Object.freeze({
@@ -51,7 +72,7 @@ THE SOFTWARE.
     const yieldDuration = 10;   //ms
 
 
-    NS.Overlay = (function () {
+    const Overlay = (function () {
 
         const module = {};
 
@@ -121,7 +142,7 @@ THE SOFTWARE.
     })();
 
 
-    NS.Controller = function () {
+    const Controller = function () {
 
         function DrawerItem(side, container, opts) {
 
@@ -136,7 +157,7 @@ THE SOFTWARE.
             function setState(value) {
                 if (state !== value) {
                     state = value;
-                    NS.Overlay.notify(module);
+                    Overlay.notify(module);
                     if ($.isFunction(options.onStateChanged)) {
                         options.onStateChanged(state);
                     }
@@ -373,13 +394,13 @@ THE SOFTWARE.
                 isContentDirty = false;
 
                 if (shouldNotify) {
-                    NS.Overlay.notify(module, coerceValue);
+                    Overlay.notify(module, coerceValue);
                 }
             };
 
             module.destroy = function () {
                 if (rendered) {
-                    NS.Overlay.notify(module, false);
+                    Overlay.notify(module, false);
                     element.remove();
                 }
                 element = null;
@@ -422,8 +443,8 @@ THE SOFTWARE.
             if (Object.values(Sides).indexOf(side) < 0) {
                 throw new Error('Invalid argument "side".');
             }
-            NS.Overlay.create();
-            const item = DrawerItem(side, NS.Overlay.container, opts);
+            Overlay.create();
+            const item = DrawerItem(side, Overlay.container, opts);
             drawers.push(item);
             return item;
         };
@@ -447,14 +468,14 @@ THE SOFTWARE.
                 d.create();
             });
 
-            $(NS.Overlay.container).on('click', overlayClick);
+            $(Overlay.container).on('click', overlayClick);
             $(window).on('resize', resize);
             rendered = true;
         };
 
         module.destroy = function () {
             $(window).off('resize', resize);
-            $(NS.Overlay.container).off('click', overlayClick);
+            $(Overlay.container).off('click', overlayClick);
 
             drawers.forEach(function (d) {
                 d.destroy();
@@ -465,5 +486,9 @@ THE SOFTWARE.
         return module;
     };
 
-})(window._AuJS_NS_('AuJS.Drawer'), jQuery);
+    // Just return a value to define the module export.
+    // This example returns an object, but the module
+    // can return a function as the exported value.
+    return { Sides, States, Overlay, Controller };
+}));
 
