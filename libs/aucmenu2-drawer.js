@@ -28,12 +28,13 @@ THE SOFTWARE.
         // AMD. Register as an anonymous module.
         define(['jquery'], function (jquery) {
             if (!jquery.fn) jquery.fn = {}; // webpack server rendering
-            return factory(jquery);
+            var o = factory(jquery);
+            for (var k in o) root[k] = o[k];
+            return o;
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
+        // only CommonJS-like environments that support module.exports, like Node.
         var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
         if (!jQuery) {
             jQuery = require('jquery');
@@ -42,8 +43,8 @@ THE SOFTWARE.
         module.exports = factory(jQuery);
     } else {
         // Browser globals
-        root.AuJS = root.AuJS || {};
-        root.AuJS.Drawer = factory(root.jQuery);
+        var o = factory(root.jQuery);
+        for (var k in o) root[k] = o[k];
     }
 }(typeof self !== 'undefined' ? self : this, function ($) {
     'use strict';
@@ -489,6 +490,6 @@ THE SOFTWARE.
     // Just return a value to define the module export.
     // This example returns an object, but the module
     // can return a function as the exported value.
-    return { Sides, States, Overlay, Controller };
+    return { AuDrawer: { Sides, States, Overlay, Controller } };
 }));
 

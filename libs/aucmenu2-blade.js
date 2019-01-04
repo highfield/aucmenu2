@@ -26,27 +26,28 @@ THE SOFTWARE.
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'AuJS'], function (jquery, aujs) {
+        define(['jquery', 'AuDrawer'], function (jquery, audrawer) {
             if (!jquery.fn) jquery.fn = {}; // webpack server rendering
-            return factory(jquery, aujs);
+            var o = factory(jquery, audrawer);
+            for (var k in o) root[k] = o[k];
+            return o;
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
+        // only CommonJS-like environments that support module.exports, like Node.
         var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
         if (!jQuery) {
             jQuery = require('jquery');
             if (!jQuery.fn) jQuery.fn = {};
         }
-        var aujs = typeof window !== 'undefined' && typeof window.AuJS !== 'undefined' ? window.AuJS : require('AuJS');
-        module.exports = factory(jQuery, aujs);
+        var audrawer = typeof window !== 'undefined' && typeof window.AuDrawer !== 'undefined' ? window.AuDrawer : require('AuDrawer');
+        module.exports = factory(jQuery, audrawer);
     } else {
         // Browser globals
-        root.AuJS = root.AuJS || {};
-        root.AuJS.BladeMenuRenderer = factory(root.jQuery, root.AuJS);
+        var o = factory(root.jQuery, root.AuDrawer);
+        for (var k in o) root[k] = o[k];
     }
-}(typeof self !== 'undefined' ? self : this, function ($, AuJS) {
+}(typeof self !== 'undefined' ? self : this, function ($, AuDrawer) {
     'use strict';
 
     const defaults = Object.freeze({
@@ -65,7 +66,7 @@ THE SOFTWARE.
     });
 
 
-    const BladeMenuRenderer = function (struct, opts) {
+    const AuBladeMenuRenderer = function (struct, opts) {
 
         const yieldDuration = 10;   //ms
 
@@ -406,7 +407,7 @@ THE SOFTWARE.
         });
 
         Object.defineProperty(module, 'isOpen', {
-            get: function () { return state === AuJS.Drawer.States.OPENED || state === AuJS.Drawer.States.OPENING; }
+            get: function () { return state === AuDrawer.States.OPENED || state === AuDrawer.States.OPENING; }
         });
 
         module.create = function () {
@@ -426,7 +427,7 @@ THE SOFTWARE.
                 hook.element.children().detach();
                 hook = null;
             }
-            state = AuJS.Drawer.States.CLOSED;
+            state = AuDrawer.States.CLOSED;
             rendered = false;
         };
 
@@ -476,10 +477,10 @@ THE SOFTWARE.
         };
 
 
-        var state = AuJS.Drawer.States.CLOSED;
+        var state = AuDrawer.States.CLOSED;
         module.open = function (cb) {
-            if (state === AuJS.Drawer.States.CLOSED) {
-                state = AuJS.Drawer.States.OPENING;
+            if (state === AuDrawer.States.CLOSED) {
+                state = AuDrawer.States.OPENING;
                 if (this.rendered) {
                     restoreSelectedBlades();
                 }
@@ -487,7 +488,7 @@ THE SOFTWARE.
                     module.render();
                 }
                 setTimeout(function () {
-                    state = AuJS.Drawer.States.OPENED;
+                    state = AuDrawer.States.OPENED;
                     if ($.isFunction(cb)) cb();
                 }, module.getActualOption('transitionDuration'));
             }
@@ -495,14 +496,14 @@ THE SOFTWARE.
 
 
         module.close = function (cb) {
-            if (state === AuJS.Drawer.States.OPENED) {
-                state = AuJS.Drawer.States.CLOSING;
+            if (state === AuDrawer.States.OPENED) {
+                state = AuDrawer.States.CLOSING;
                 hook.close && hook.close(true);
                 involvedBlades.length = 0;
                 involvedNodes.length = 0;
                 updateBlades();
                 setTimeout(function () {
-                    state = AuJS.Drawer.States.CLOSED;
+                    state = AuDrawer.States.CLOSED;
                     if ($.isFunction(cb)) cb();
                 }, module.getActualOption('transitionDuration'));
             }
@@ -513,8 +514,8 @@ THE SOFTWARE.
             if (state === s) return;
             state = s;
             switch (state) {
-                case AuJS.Drawer.States.OPENING:
-                case AuJS.Drawer.States.OPENED:
+                case AuDrawer.States.OPENING:
+                case AuDrawer.States.OPENED:
                     //console.log('preset')
                     if (this.rendered) {
                         restoreSelectedBlades();
@@ -522,22 +523,22 @@ THE SOFTWARE.
                     else {
                         module.render();
                     }
-                    state = AuJS.Drawer.States.OPENED;
+                    state = AuDrawer.States.OPENED;
                     break;
 
-                case AuJS.Drawer.States.CLOSING:
-                case AuJS.Drawer.States.CLOSED:
+                case AuDrawer.States.CLOSING:
+                case AuDrawer.States.CLOSED:
                     involvedBlades.length = 0;
                     involvedNodes.length = 0;
                     updateBlades();
-                    state = AuJS.Drawer.States.CLOSED;
+                    state = AuDrawer.States.CLOSED;
                     break;
             }
         };
 
 
         module.back = function () {
-            if (state === AuJS.Drawer.States.OPENED) {
+            if (state === AuDrawer.States.OPENED) {
                 if (involvedBlades.length > 1) {
                     involvedBlades.splice(0, 1);
                     updateBlades();
@@ -550,7 +551,7 @@ THE SOFTWARE.
 
 
         module.destroy = function () {
-            state = AuJS.Drawer.States.CLOSED;
+            state = AuDrawer.States.CLOSED;
             rendered = false;
             involvedBlades.length = 0;
             involvedNodes.length = 0;
@@ -566,5 +567,5 @@ THE SOFTWARE.
     // Just return a value to define the module export.
     // This example returns an object, but the module
     // can return a function as the exported value.
-    return BladeMenuRenderer;
+    return { AuBladeMenuRenderer };
 }));

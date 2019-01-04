@@ -35,7 +35,7 @@ $(function () {
             destroy: function () {
                 fragment = null;
             }
-        }
+        };
     }
 
 
@@ -45,8 +45,8 @@ $(function () {
     const rightRenderer = myRenderer();
 
 
-    const drawerCtl = AuJS.Drawer.Controller();
-    const dl = drawerCtl.add(AuJS.Drawer.Sides.LEFT, {
+    const drawerCtl = AuDrawer.Controller();
+    const dl = drawerCtl.add(AuDrawer.Sides.LEFT, {
         render_lg: {
             renderer: leftRenderer,
             isAutoClose: false,
@@ -60,11 +60,11 @@ $(function () {
         }
     });
 
-    const dr = drawerCtl.add(AuJS.Drawer.Sides.RIGHT, {
+    const dr = drawerCtl.add(AuDrawer.Sides.RIGHT, {
         render_lg: {
             renderer: rightRenderer,
             persistent: true,
-            drawerSize: 400,
+            drawerSize: 400
         }
     });
     drawerCtl.create();

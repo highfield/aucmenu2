@@ -26,27 +26,28 @@ THE SOFTWARE.
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery', 'AuJS'], function (jquery, aujs) {
+        define(['jquery', 'AuDrawer'], function (jquery, audrawer) {
             if (!jquery.fn) jquery.fn = {}; // webpack server rendering
-            return factory(jquery, aujs);
+            var o = factory(jquery, audrawer);
+            for (var k in o) root[k] = o[k];
+            return o;
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
+        // only CommonJS-like environments that support module.exports, like Node.
         var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
         if (!jQuery) {
             jQuery = require('jquery');
             if (!jQuery.fn) jQuery.fn = {};
         }
-        var aujs = typeof window !== 'undefined' && typeof window.AuJS !== 'undefined' ? window.AuJS : require('AuJS');
-        module.exports = factory(jQuery, aujs);
+        var audrawer = typeof window !== 'undefined' && typeof window.AuDrawer !== 'undefined' ? window.AuDrawer : require('AuDrawer');
+        module.exports = factory(jQuery, audrawer);
     } else {
         // Browser globals
-        root.AuJS = root.AuJS || {};
-        root.AuJS.TreeMenuRenderer = factory(root.jQuery, root.AuJS);
+        var o = factory(root.jQuery, root.AuDrawer);
+        for (var k in o) root[k] = o[k];
     }
-}(typeof self !== 'undefined' ? self : this, function ($, AuJS) {
+}(typeof self !== 'undefined' ? self : this, function ($, AuDrawer) {
     'use strict';
 
     const defaults = Object.freeze({
@@ -60,7 +61,7 @@ THE SOFTWARE.
     });
 
 
-    const TreeMenuRenderer = function (struct, opts) {
+    const AuTreeMenuRenderer = function (struct, opts) {
 
         const yieldDuration = 10;   //ms
 
@@ -70,7 +71,7 @@ THE SOFTWARE.
 
         function NodeRenderer(owner, node) {
             const self = this;
-            var state = AuJS.Drawer.States.CLOSED;
+            var state = AuDrawer.States.CLOSED;
 
             Object.defineProperty(this, 'node', {
                 value: node,
@@ -83,7 +84,7 @@ THE SOFTWARE.
             });
 
             Object.defineProperty(this, 'expanded', {
-                get: function () { return state === AuJS.Drawer.States.OPENED || state === AuJS.Drawer.States.OPENING; }
+                get: function () { return state === AuDrawer.States.OPENED || state === AuDrawer.States.OPENING; }
             });
 
             var rendered = false;
@@ -193,12 +194,12 @@ THE SOFTWARE.
                         const itemsCtrStyle = self.itemsCtr[0].style;
 
                         if (self.expanded) {
-                            state = AuJS.Drawer.States.OPENED;
+                            state = AuDrawer.States.OPENED;
                             xbtnContentStyle.transition = '';
                             xbtnContentStyle.transform = 'rotate(90deg)';
                         }
                         else {
-                            state = AuJS.Drawer.States.CLOSED;
+                            state = AuDrawer.States.CLOSED;
                             itemsCtrStyle.transition = '';
                             itemsCtrStyle.opacity = 0;
                             itemsCtrStyle.height = 0;
@@ -252,10 +253,10 @@ THE SOFTWARE.
 
             this.expand = function () {
                 if (!rendered) {
-                    state = AuJS.Drawer.States.OPENED;
+                    state = AuDrawer.States.OPENED;
                 }
-                else if (state === AuJS.Drawer.States.CLOSED && node.expandable) {
-                    state = AuJS.Drawer.States.OPENING;
+                else if (state === AuDrawer.States.CLOSED && node.expandable) {
+                    state = AuDrawer.States.OPENING;
                     self.showOutlineBay(false);
 
                     const button = self.element
@@ -279,7 +280,7 @@ THE SOFTWARE.
                         itemsCtrStyle.height = self.getChildrenHeight() + 'px';
 
                         setTimeout(function () {
-                            state = AuJS.Drawer.States.OPENED;
+                            state = AuDrawer.States.OPENED;
                             itemsCtrStyle.height = 'auto';
                             self.updateSiblingOutlines();
                             self.showOutlineBay();
@@ -290,10 +291,10 @@ THE SOFTWARE.
 
             this.collapse = function () {
                 if (!rendered) {
-                    state = AuJS.Drawer.States.CLOSED;
+                    state = AuDrawer.States.CLOSED;
                 }
-                else if (state === AuJS.Drawer.States.OPENED && node.expandable) {
-                    state = AuJS.Drawer.States.CLOSING;
+                else if (state === AuDrawer.States.OPENED && node.expandable) {
+                    state = AuDrawer.States.CLOSING;
                     self.showOutlineBay(false);
 
                     const button = self.element
@@ -317,7 +318,7 @@ THE SOFTWARE.
                         itemsCtrStyle.height = 0;
 
                         setTimeout(function () {
-                            state = AuJS.Drawer.States.CLOSED;
+                            state = AuDrawer.States.CLOSED;
                             self.updateSiblingOutlines();
                             self.showOutlineBay();
                         }, owner.getActualOption('transitionDuration'));
@@ -326,10 +327,10 @@ THE SOFTWARE.
             };
 
             this.cmdexp = function () {
-                if (state === AuJS.Drawer.States.CLOSED) {
+                if (state === AuDrawer.States.CLOSED) {
                     self.expand();
                 }
-                else if (state === AuJS.Drawer.States.OPENED) {
+                else if (state === AuDrawer.States.OPENED) {
                     self.collapse();
                 }
             };
@@ -486,5 +487,5 @@ THE SOFTWARE.
     // Just return a value to define the module export.
     // This example returns an object, but the module
     // can return a function as the exported value.
-    return TreeMenuRenderer;
+    return { AuTreeMenuRenderer };
 }));

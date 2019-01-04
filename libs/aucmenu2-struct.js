@@ -28,12 +28,13 @@ THE SOFTWARE.
         // AMD. Register as an anonymous module.
         define(['jquery'], function (jquery) {
             if (!jquery.fn) jquery.fn = {}; // webpack server rendering
-            return factory(jquery);
+            var o = factory(jquery);
+            for (var k in o) root[k] = o[k];
+            return o;
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
+        // only CommonJS-like environments that support module.exports, like Node.
         var jQuery = typeof window !== 'undefined' ? window.jQuery : undefined;
         if (!jQuery) {
             jQuery = require('jquery');
@@ -42,8 +43,8 @@ THE SOFTWARE.
         module.exports = factory(jQuery);
     } else {
         // Browser globals
-        root.AuJS = root.AuJS || {};
-        root.AuJS.MenuStruct = factory(root.jQuery);
+        var o = factory(root.jQuery);
+        for (var k in o) root[k] = o[k];
     }
 }(typeof self !== 'undefined' ? self : this, function ($) {
     'use strict';
@@ -56,7 +57,7 @@ THE SOFTWARE.
     })();
 
 
-    const MenuStruct = function (options) {
+    const AuMenuStruct = function (options) {
 
         /**
          * node schema:
@@ -70,7 +71,7 @@ THE SOFTWARE.
          */
 
         function Node(context, id, label) {
-            const self = this;
+            const me = this;
 
             Object.defineProperty(this, 'id', {
                 value: id,
@@ -88,7 +89,7 @@ THE SOFTWARE.
             });
 
             Object.defineProperty(this, 'expandable', {
-                get: function () { return self.children.length !== 0; }
+                get: function () { return me.children.length !== 0; }
             });
 
             this.parentId = null;
@@ -97,8 +98,8 @@ THE SOFTWARE.
             this.children = [];
 
             this.getFirstChild = function () {
-                if (!self.children.length) return;
-                const id1 = self.children[0];
+                if (!me.children.length) return;
+                const id1 = me.children[0];
                 const id = Array.isArray(id1) ? id1[0] : id1;
                 return context.nodeMap[id];
             };
@@ -179,6 +180,6 @@ THE SOFTWARE.
     // Just return a value to define the module export.
     // This example returns an object, but the module
     // can return a function as the exported value.
-    return MenuStruct;
+    return { AuMenuStruct };
 }));
 

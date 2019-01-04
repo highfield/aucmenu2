@@ -39,7 +39,7 @@ $(function () {
             destroy: function () {
                 fragment = null;
             }
-        }
+        };
     }
 
     const rightRenderer = myRenderer();
@@ -47,12 +47,12 @@ $(function () {
 
     $('.button-right-unload').on('click', function () {
         rightRenderer.destroy();
-        AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
+        AuAuDocker.docker(AuAuDocker.Sides.RIGHT).invalidateContent();
     });
 
     $('.button-right-load').on('click', function () {
         rightRenderer.create();
-        AuJS.AuDocker.docker(AuJS.AuDocker.Sides.RIGHT).invalidateContent();
+        AuAuDocker.docker(AuAuDocker.Sides.RIGHT).invalidateContent();
     });
 
 
@@ -60,14 +60,14 @@ $(function () {
     /**
      * menu model structure
      **/
-    const menu_struct = AuJS.MenuStruct();
+    const menu_struct = AuMenuStruct();
     menu_struct.setData(DB.tree);
 
 
     /**
      * selection manager (single selection only)
      **/
-    const selectionManager = AuJS.MenuSelectorSingle();
+    const selectionManager = AuMenuSelectorSingle();
 
     selectionManager.addListener(function (selId) {
         //just display some info about the current selection
@@ -98,7 +98,7 @@ $(function () {
     /**
      * blade-menu renderer
      **/
-    const bladeRenderer = AuJS.BladeMenuRenderer(menu_struct);
+    const bladeRenderer = AuBladeMenuRenderer(menu_struct);
     bladeRenderer.selector = selectionManager;
 
 
@@ -106,7 +106,7 @@ $(function () {
     /**
      * tree-menu renderer
      **/
-    const treeRenderer = AuJS.TreeMenuRenderer(menu_struct);
+    const treeRenderer = AuTreeMenuRenderer(menu_struct);
     treeRenderer.selector = selectionManager;
 
 
@@ -115,8 +115,8 @@ $(function () {
      * Drawers setup
      **/
 
-    const drawerCtl = AuJS.Drawer.Controller();
-    const dl = drawerCtl.add(AuJS.Drawer.Sides.LEFT, {
+    const drawerCtl = AuDrawer.Controller();
+    const dl = drawerCtl.add(AuDrawer.Sides.LEFT, {
         render_lg: {
             name: 'myTree',
             renderer: treeRenderer,
@@ -132,11 +132,11 @@ $(function () {
         }
     });
 
-    const dr = drawerCtl.add(AuJS.Drawer.Sides.RIGHT, {
+    const dr = drawerCtl.add(AuDrawer.Sides.RIGHT, {
         render_lg: {
             renderer: rightRenderer,
             persistent: true,
-            drawerSize: 400,
+            drawerSize: 400
         }
     });
     drawerCtl.create();

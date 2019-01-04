@@ -4,7 +4,7 @@ $(function () {
     /**
      * menu model structure
      **/
-    const menu_struct = AuJS.MenuStruct();
+    const menu_struct = AuMenuStruct();
 
 
     $('.button-struct-set').on('click', function () {
@@ -19,7 +19,7 @@ $(function () {
     /**
      * selection manager (single selection only)
      **/
-    const selectionManager = AuJS.MenuSelectorSingle();
+    const selectionManager = AuMenuSelectorSingle();
     selectionManager.addListener(function (selId) {
         const node = menu_struct.getNode(selId);
         $('#sel_id').text(node && node.id || '');
@@ -43,7 +43,7 @@ $(function () {
     /**
      * menu renderer
      **/
-    const renderer = AuJS.TreeMenuRenderer(menu_struct);
+    const renderer = AuTreeMenuRenderer(menu_struct);
     renderer.selector = selectionManager;
 
     $('.button-render').on('click', function () {
